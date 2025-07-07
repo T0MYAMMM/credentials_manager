@@ -1,0 +1,235 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Secure Notes - Credentials Manager{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'frontend:dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-separator">/</span>
+<span class="breadcrumb-item active">Secure Notes</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Secure Notes</h1>
+            <p class="page-subtitle">Manage your encrypted notes and documents</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'frontend:note_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Add Note
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="card">
+    <div class="card-body">
+        <form method="get" style="display: grid; grid-template-columns: 1fr 200px 200px auto; gap: 16px; align-items: end;">
+            <div class="form-group mb-0">
+                <label class="form-label" for="query">Search Notes</label>
+                <input type="text" 
+                       name="query" 
+                       id="query"
+                       class="form-control" 
+                       placeholder="Search by title or content..."
+                       value="{{ request.GET.query }}">
+            </div>
+            
+            <div class="form-group mb-0">
+                <label class="form-label" for="category_filter">Category</label>
+                <select name="category_filter" id="category_filter" class="form-control">
+                    <option value="">All Categories</option>
+                    <option value="personal" {% if request.GET.category_filter == 'personal' %}selected{% endif %}>Personal</option>
+                    <option value="work" {% if request.GET.category_filter == 'work' %}selected{% endif %}>Work</option>
+                    <option value="financial" {% if request.GET.category_filter == 'financial' %}selected{% endif %}>Financial</option>
+                    <option value="medical" {% if request.GET.category_filter == 'medical' %}selected{% endif %}>Medical</option>
+                    <option value="legal" {% if request.GET.category_filter == 'legal' %}selected{% endif %}>Legal</option>
+                    <option value="technical" {% if request.GET.category_filter == 'technical' %}selected{% endif %}>Technical</option>
+                </select>
+            </div>
+            
+            <div class="form-group mb-0">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--fg-muted); font-size: 14px; margin-top: 20px;">
+                    <input type="checkbox" name="favorites_only" {% if request.GET.favorites_only %}checked{% endif %}>
+                    Favorites only
+                </label>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+                <a href="{% url 'frontend:notes_list' %}" class="btn">
+                    <i class="fas fa-times"></i>
+                    Clear
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">
+            {% if total_count %}
+                {{ total_count }} Note{{ total_count|pluralize }} Found
+            {% else %}
+                No Notes Found
+            {% endif %}
+        </h2>
+    </div>
+    <div class="card-body">
+        {% if page_obj %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px;">
+                {% for note in page_obj %}
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div style="flex: 1;">
+                                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                                        <a href="{% url 'frontend:note_detail' note.pk %}" style="color: var(--fg-default); text-decoration: none;">
+                                            {{ note.title }}
+                                        </a>
+                                    </h3>
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                        <span style="background-color: var(--bg-canvas-subtle); color: var(--success-fg); padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">
+                                            {{ note.category|title }}
+                                        </span>
+                                        {% if note.is_favorite %}
+                                            <i class="fas fa-star" style="color: var(--attention-fg); font-size: 14px;"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <button class="btn" style="padding: 4px 8px; margin: 0;" onclick="toggleFavorite('note', {{ note.pk }}, this.querySelector('i'))">
+                                    <i class="fa{% if note.is_favorite %}s{% else %}r{% endif %} fa-star" style="color: {% if note.is_favorite %}var(--attention-fg){% else %}var(--fg-muted){% endif %};"></i>
+                                </button>
+                            </div>
+                            
+                            <div style="color: var(--fg-muted); font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
+                                {{ note.content|truncatewords:20 }}
+                            </div>
+                            
+                            {% if note.tags %}
+                                <div style="margin-bottom: 16px;">
+                                    {% for tag in note.tags_list %}
+                                        <span style="background-color: var(--bg-canvas-subtle); color: var(--fg-muted); padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 4px;">
+                                            {{ tag }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <div style="display: flex; justify-content: between; align-items: center; font-size: 12px; color: var(--fg-subtle);">
+                                <div>
+                                    Created {{ note.created_at|timesince }} ago
+                                    {% if note.updated_at != note.created_at %}
+                                        • Updated {{ note.updated_at|timesince }} ago
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 16px 24px; border-top: 1px solid var(--border-default); background-color: var(--bg-canvas-subtle);">
+                            <div class="d-flex gap-2">
+                                                        <a href="{% url 'frontend:note_detail' note.pk %}" class="btn btn-sm btn-primary" style="flex: 1;">
+                            <i class="fas fa-eye"></i>
+                            View
+                        </a>
+                                <a href="{% url 'frontend:note_edit' note.pk %}" class="btn btn-sm" style="flex: 1;">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+                <div style="margin-top: 32px;">
+                    <nav style="display: flex; justify-content: center;">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            {% if page_obj.has_previous %}
+                                <a href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category_filter %}&category_filter={{ request.GET.category_filter }}{% endif %}{% if request.GET.favorites_only %}&favorites_only=on{% endif %}" 
+                                   class="btn btn-sm">First</a>
+                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category_filter %}&category_filter={{ request.GET.category_filter }}{% endif %}{% if request.GET.favorites_only %}&favorites_only=on{% endif %}" 
+                                   class="btn btn-sm">Previous</a>
+                            {% endif %}
+                            
+                            <span style="padding: 8px 16px; color: var(--fg-default); font-weight: 500;">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                            
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category_filter %}&category_filter={{ request.GET.category_filter }}{% endif %}{% if request.GET.favorites_only %}&favorites_only=on{% endif %}" 
+                                   class="btn btn-sm">Next</a>
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category_filter %}&category_filter={{ request.GET.category_filter }}{% endif %}{% if request.GET.favorites_only %}&favorites_only=on{% endif %}" 
+                                   class="btn btn-sm">Last</a>
+                            {% endif %}
+                        </div>
+                    </nav>
+                </div>
+            {% endif %}
+        {% else %}
+            <div style="text-align: center; padding: 64px 0;">
+                <div style="color: var(--fg-muted); margin-bottom: 24px;">
+                    <i class="fas fa-sticky-note" style="font-size: 64px; opacity: 0.3;"></i>
+                </div>
+                <h3 style="color: var(--fg-default); margin-bottom: 16px;">No notes found</h3>
+                <p style="color: var(--fg-muted); margin-bottom: 24px;">
+                    {% if request.GET.query or request.GET.category_filter or request.GET.favorites_only %}
+                        Try adjusting your search criteria or clear the filters.
+                    {% else %}
+                        Start by creating your first secure note to store important information.
+                    {% endif %}
+                </p>
+                <a href="{% url 'frontend:note_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    {% if request.GET.query or request.GET.category_filter or request.GET.favorites_only %}
+                        Add Note
+                    {% else %}
+                        Add Your First Note
+                    {% endif %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Notes list specific styles */
+@media (max-width: 768px) {
+    .page-header .d-flex {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start !important;
+    }
+    
+    /* Make search form stack on mobile */
+    .card-body form[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    /* Make notes grid single column on mobile */
+    [style*="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr))"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Hover effects for note cards */
+.card .card-body:hover {
+    background-color: var(--bg-canvas-subtle);
+    transition: background-color var(--transition-fast);
+}
+
+.card a[href]:hover {
+    color: var(--accent-fg) !important;
+}
+</style>
+{% endblock %} 

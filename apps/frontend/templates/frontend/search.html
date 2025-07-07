@@ -1,0 +1,368 @@
+{% extends 'layouts/base.html' %}
+{% load home_filters %}
+
+{% block title %}Search - Credentials Manager{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'frontend:dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-separator">/</span>
+<span class="breadcrumb-item active">Search</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Advanced Search</h1>
+            <p class="page-subtitle">Search through your credentials and secure notes</p>
+        </div>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-search"></i>
+            Search Filters
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="get" class="search-form">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.query.id_for_label }}" class="form-label">Search Query</label>
+                        {{ form.query }}
+                        {% if form.query.help_text %}
+                            <small class="form-text text-muted">{{ form.query.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="{{ form.type_filter.id_for_label }}" class="form-label">Type Filter</label>
+                        {{ form.type_filter }}
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="form-check mt-4">
+                            {{ form.favorites_only }}
+                            <label class="form-check-label" for="{{ form.favorites_only.id_for_label }}">
+                                <i class="fas fa-star text-warning"></i>
+                                Favorites only
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                    <a href="{% url 'frontend:search' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if results %}
+<!-- Search Results -->
+<div class="row">
+    <!-- Credentials Results -->
+    {% if results.credentials_page %}
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-key"></i>
+                    Credentials ({{ results.credentials_page.paginator.count }})
+                </h3>
+            </div>
+            <div class="card-body">
+                {% for credential in results.credentials_page %}
+                    <div class="result-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-fill">
+                                <h5 class="result-title">
+                                    <a href="{% url 'frontend:credential_detail' credential.pk %}">
+                                        {{ credential.label }}
+                                    </a>
+                                    {% if credential.is_favorite %}
+                                        <i class="fas fa-star text-warning ms-2"></i>
+                                    {% endif %}
+                                </h5>
+                                <div class="result-meta">
+                                    <span class="badge bg-primary">{{ credential.type|title }}</span>
+                                    {% if credential.username %}
+                                        <span class="text-muted">• {{ credential.username }}</span>
+                                    {% endif %}
+                                    {% if credential.email %}
+                                        <span class="text-muted">• {{ credential.email }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if credential.note %}
+                                    <p class="result-snippet">{{ credential.note|truncatewords:15 }}</p>
+                                {% endif %}
+                                <small class="text-muted">
+                                    Updated {{ credential.updated_at|timesince }} ago
+                                </small>
+                            </div>
+                            <div class="result-actions">
+                                <a href="{% url 'frontend:credential_detail' credential.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'frontend:credential_edit' credential.pk %}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}
+                        <hr class="my-3">
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Credentials Pagination -->
+                {% if results.credentials_page.has_other_pages %}
+                    <nav aria-label="Credentials pagination" class="mt-3">
+                        <ul class="pagination pagination-sm justify-content-center">
+                            {% if results.credentials_page.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&cred_page=1">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&cred_page={{ results.credentials_page.previous_page_number }}">Previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Page {{ results.credentials_page.number }} of {{ results.credentials_page.paginator.num_pages }}
+                                </span>
+                            </li>
+                            
+                            {% if results.credentials_page.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&cred_page={{ results.credentials_page.next_page_number }}">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&cred_page={{ results.credentials_page.paginator.num_pages }}">Last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Notes Results -->
+    {% if results.notes_page %}
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-sticky-note"></i>
+                    Notes ({{ results.notes_page.paginator.count }})
+                </h3>
+            </div>
+            <div class="card-body">
+                {% for note in results.notes_page %}
+                    <div class="result-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-fill">
+                                <h5 class="result-title">
+                                    <a href="{% url 'frontend:note_detail' note.pk %}">
+                                        {{ note.title }}
+                                    </a>
+                                    {% if note.is_favorite %}
+                                        <i class="fas fa-star text-warning ms-2"></i>
+                                    {% endif %}
+                                </h5>
+                                <div class="result-meta">
+                                    <span class="badge bg-secondary">{{ note.category|title }}</span>
+                                </div>
+                                <p class="result-snippet">{{ note.content|truncatewords:20 }}</p>
+                                <small class="text-muted">
+                                    Updated {{ note.updated_at|timesince }} ago
+                                </small>
+                            </div>
+                            <div class="result-actions">
+                                <a href="{% url 'frontend:note_detail' note.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'frontend:note_edit' note.pk %}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}
+                        <hr class="my-3">
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Notes Pagination -->
+                {% if results.notes_page.has_other_pages %}
+                    <nav aria-label="Notes pagination" class="mt-3">
+                        <ul class="pagination pagination-sm justify-content-center">
+                            {% if results.notes_page.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&note_page=1">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&note_page={{ results.notes_page.previous_page_number }}">Previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Page {{ results.notes_page.number }} of {{ results.notes_page.paginator.num_pages }}
+                                </span>
+                            </li>
+                            
+                            {% if results.notes_page.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&note_page={{ results.notes_page.next_page_number }}">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{{ form.as_url_params }}&note_page={{ results.notes_page.paginator.num_pages }}">Last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if not results.credentials_page and not results.notes_page %}
+<!-- No Results -->
+<div class="card">
+    <div class="card-body text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-search text-muted" style="font-size: 64px; opacity: 0.3;"></i>
+        </div>
+        <h3 class="text-muted">No results found</h3>
+        <p class="text-muted">
+            Try adjusting your search terms or filters to find what you're looking for.
+        </p>
+        <div class="mt-4">
+            <a href="{% url 'frontend:credential_create' %}" class="btn btn-primary me-2">
+                <i class="fas fa-plus"></i>
+                Add Credential
+            </a>
+            <a href="{% url 'frontend:note_create' %}" class="btn btn-outline-primary">
+                <i class="fas fa-plus"></i>
+                Add Note
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% elif form.is_bound %}
+<!-- No Search Performed Yet -->
+<div class="card">
+    <div class="card-body text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-search text-primary" style="font-size: 64px; opacity: 0.5;"></i>
+        </div>
+        <h3>Enter a search query</h3>
+        <p class="text-muted">
+            Use the search form above to find your credentials and notes.
+        </p>
+    </div>
+</div>
+{% else %}
+<!-- Initial State -->
+<div class="card">
+    <div class="card-body text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-search text-primary" style="font-size: 64px; opacity: 0.5;"></i>
+        </div>
+        <h3>Search Your Data</h3>
+        <p class="text-muted">
+            Find credentials and notes by searching labels, usernames, content, and more.
+        </p>
+        <div class="mt-4">
+            <h5>Search Tips:</h5>
+            <ul class="list-unstyled text-muted">
+                <li><i class="fas fa-check text-success me-2"></i> Search by credential labels or note titles</li>
+                <li><i class="fas fa-check text-success me-2"></i> Filter by type (email, banking, etc.)</li>
+                <li><i class="fas fa-check text-success me-2"></i> Show only favorites</li>
+                <li><i class="fas fa-check text-success me-2"></i> Search content and notes</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.result-item {
+    padding: 15px 0;
+}
+
+.result-title {
+    margin-bottom: 8px;
+}
+
+.result-title a {
+    text-decoration: none;
+    color: var(--bs-dark);
+}
+
+.result-title a:hover {
+    color: var(--bs-primary);
+}
+
+.result-meta {
+    margin-bottom: 8px;
+}
+
+.result-snippet {
+    color: var(--bs-secondary);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.result-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.search-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.search-form .form-control, .search-form .form-select {
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+    .result-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+}
+</style>
+{% endblock %} 

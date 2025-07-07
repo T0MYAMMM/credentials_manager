@@ -1,0 +1,49 @@
+# Django Core
+Django>=5.2.4
+django-environ>=0.12.0
+python-decouple>=3.8
+
+# Database
+psycopg2-binary>=2.9.10  # PostgreSQL support
+dj-database-url>=3.0.1  # Database URL parsing
+
+# Static Files & Media
+whitenoise>=6.9.0  # Static file serving
+Pillow>=11.3.0  # Image processing
+
+# Security & Authentication
+cryptography>=45.0.5  # For Fernet encryption
+
+# API & REST
+djangorestframework>=3.16.0  # REST API framework
+
+# Caching (optional)
+django-redis>=6.0.0  # Redis cache backend
+redis>=6.2.0  # Redis client
+
+# Development Tools (optional)
+django-debug-toolbar>=5.2.0  # Debug toolbar
+django-extensions>=4.1  # Development utilities
+
+# Testing & Quality (optional)
+coverage>=7.9.2  # Test coverage
+pytest>=8.4.1  # Testing framework
+pytest-django>=4.11.0  # Django integration for pytest
+factory-boy>=3.3.3  # Test data generation
+
+# Monitoring & Logging (optional)
+sentry-sdk>=2.32.0  # Error tracking
+
+# Production Server (optional)
+gunicorn>=23.0.0  # WSGI server
+uvicorn>=0.35.0  # ASGI server
+
+# Utilities
+python-dateutil>=2.9.0.post0  # Date utilities
+pytz>=2025.2  # Timezone support
+
+# Development Dependencies (install with: pip install -r requirements-dev.txt)
+black>=25.1.0  # Code formatting
+flake8>=7.3.0  # Code linting
+isort>=6.0.1  # Import sorting
+mypy>=1.16.1  # Type checking 

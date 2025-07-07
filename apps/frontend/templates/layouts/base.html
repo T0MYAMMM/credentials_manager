@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure credentials manager inspired by Cursor.com design">
+    <title>{% block title %}Credentials Manager{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z'/></svg>">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% load static %}{% static 'frontend/css/main.css' %}">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="page-wrapper">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between" style="padding: var(--space-4) 0;">
+                <!-- Brand -->
+                <a href="{% url 'frontend:dashboard' %}" class="navbar-brand">
+                    <i class="fas fa-shield-alt" style="color: var(--color-accent-primary);"></i>
+                    <span>Credentials Manager</span>
+                </a>
+                
+                <!-- Navigation Links -->
+                {% if user.is_authenticated %}
+                <div class="navbar-nav">
+                    <a href="{% url 'frontend:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                    <a href="{% url 'frontend:credentials_list' %}" class="nav-link {% if 'credential' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="fas fa-key"></i>
+                        Credentials
+                    </a>
+                    <a href="{% url 'frontend:notes_list' %}" class="nav-link {% if 'note' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="fas fa-sticky-note"></i>
+                        Notes
+                    </a>
+                    <a href="{% url 'frontend:search' %}" class="nav-link {% if request.resolver_match.url_name == 'search' %}active{% endif %}">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </a>
+                    
+                    <!-- User Menu -->
+                    <div style="position: relative; margin-left: var(--space-4);">
+                        <button id="user-menu-btn" class="btn btn-outline" style="padding: var(--space-2) var(--space-3);">
+                            <i class="fas fa-user"></i>
+                            {{ user.username }}
+                            <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: var(--space-1);"></i>
+                        </button>
+                        
+                        <div id="user-menu" class="user-dropdown" style="display: none;">
+                                                         <a href="{% url 'authentication:profile' %}" class="dropdown-item">
+                                 <i class="fas fa-user-circle"></i>
+                                 Profile
+                             </a>
+                             <a href="{% url 'frontend:activity_log' %}" class="dropdown-item">
+                                 <i class="fas fa-history"></i>
+                                 Activity Log
+                             </a>
+                             <div class="dropdown-divider"></div>
+                             <a href="{% url 'authentication:logout' %}" class="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                                 {% else %}
+                 <div class="navbar-nav">
+                     <a href="{% url 'authentication:login' %}" class="nav-link">
+                         <i class="fas fa-sign-in-alt"></i>
+                         Login
+                     </a>
+                     <a href="{% url 'authentication:register' %}" class="btn btn-primary">
+                         <i class="fas fa-user-plus"></i>
+                         Register
+                     </a>
+                 </div>
+                 {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumb -->
+            {% block breadcrumb %}
+            {% if user.is_authenticated %}
+            <nav class="breadcrumb">
+                <a href="{% url 'frontend:dashboard' %}" class="breadcrumb-item">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+                {% block breadcrumb_items %}{% endblock %}
+            </nav>
+            {% endif %}
+            {% endblock %}
+            
+            <!-- Messages -->
+            {% if messages %}
+            <div class="messages-container" style="margin-bottom: var(--space-6);">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} fade-in" role="alert">
+                    <div class="d-flex align-items-center gap-3">
+                        {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle"></i>
+                        {% elif message.tags == 'error' %}
+                        <i class="fas fa-exclamation-circle"></i>
+                        {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {% else %}
+                        <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Page Content -->
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--color-bg-secondary); border-top: 1px solid var(--color-border-primary); padding: var(--space-8) 0;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center" style="flex-wrap: wrap; gap: var(--space-4);">
+                <div>
+                    <p style="margin: 0; color: var(--color-text-tertiary); font-size: var(--font-size-sm);">
+                        &copy; 2025 Credentials Manager. Secure by design.
+                    </p>
+                </div>
+                <div class="d-flex gap-4">
+                    <a href="#" style="color: var(--color-text-tertiary); font-size: var(--font-size-sm);">Privacy</a>
+                    <a href="#" style="color: var(--color-text-tertiary); font-size: var(--font-size-sm);">Terms</a>
+                    <a href="#" style="color: var(--color-text-tertiary); font-size: var(--font-size-sm);">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% load static %}{% static 'frontend/js/main.js' %}"></script>
+    
+    <script>
+        // User menu dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuBtn = document.getElementById('user-menu-btn');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (userMenuBtn && userMenu) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userMenu.style.display = userMenu.style.display === 'none' ? 'block' : 'none';
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function() {
+                    userMenu.style.display = 'none';
+                });
+                
+                // Prevent menu from closing when clicking inside
+                userMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+    
+    <style>
+        /* User dropdown styles */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            min-width: 180px;
+            padding: var(--space-2);
+            z-index: 1000;
+            margin-top: var(--space-1);
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+        
+        .dropdown-item.text-danger {
+            color: var(--color-danger);
+        }
+        
+        .dropdown-item.text-danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--color-border-primary);
+            margin: var(--space-2) 0;
+        }
+        
+        /* Messages animations */
+        .messages-container .alert {
+            animation: slideInDown 0.3s ease-out;
+        }
+        
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive navigation */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                gap: var(--space-3);
+            }
+            
+            .nav-link {
+                padding: var(--space-2);
+                font-size: var(--font-size-sm);
+            }
+            
+            .nav-link i {
+                display: none;
+            }
+            
+            .navbar-brand span {
+                font-size: var(--font-size-base);
+            }
+        }
+    </style>
+</body>
+</html> 

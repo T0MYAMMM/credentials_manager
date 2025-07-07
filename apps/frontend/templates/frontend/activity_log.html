@@ -1,0 +1,376 @@
+{% extends 'layouts/base.html' %}
+{% load home_filters %}
+
+{% block title %}Activity Log - Credentials Manager{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'frontend:dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-separator">/</span>
+<span class="breadcrumb-item active">Activity Log</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Activity Log</h1>
+            <p class="page-subtitle">Track your account activity and security events</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'frontend:export_data' %}" class="btn btn-outline-primary">
+                <i class="fas fa-download"></i>
+                Export Data
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if page_obj %}
+<!-- Activity List -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-history"></i>
+            Recent Activity ({{ page_obj.paginator.count }} total)
+        </h3>
+    </div>
+    <div class="card-body p-0">
+        <div class="activity-timeline">
+            {% for activity in page_obj %}
+                <div class="activity-item {% if forloop.first %}first{% endif %} {% if forloop.last %}last{% endif %}">
+                    <div class="activity-icon">
+                        {% if activity.action == 'login' %}
+                            <i class="fas fa-sign-in-alt text-success"></i>
+                        {% elif activity.action == 'logout' %}
+                            <i class="fas fa-sign-out-alt text-warning"></i>
+                        {% elif activity.action == 'create_credential' %}
+                            <i class="fas fa-plus-circle text-primary"></i>
+                        {% elif activity.action == 'update_credential' %}
+                            <i class="fas fa-edit text-info"></i>
+                        {% elif activity.action == 'delete_credential' %}
+                            <i class="fas fa-trash text-danger"></i>
+                        {% elif activity.action == 'view_credential' %}
+                            <i class="fas fa-eye text-secondary"></i>
+                        {% elif activity.action == 'create_note' %}
+                            <i class="fas fa-plus-circle text-primary"></i>
+                        {% elif activity.action == 'update_note' %}
+                            <i class="fas fa-edit text-info"></i>
+                        {% elif activity.action == 'delete_note' %}
+                            <i class="fas fa-trash text-danger"></i>
+                        {% elif activity.action == 'view_note' %}
+                            <i class="fas fa-eye text-secondary"></i>
+                        {% elif activity.action == 'search' %}
+                            <i class="fas fa-search text-info"></i>
+                        {% elif activity.action == 'export_data' %}
+                            <i class="fas fa-download text-success"></i>
+                        {% elif activity.action == 'favorite' %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                            <i class="fas fa-circle text-muted"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="activity-content">
+                        <div class="activity-header">
+                            <h5 class="activity-title">{{ activity.description }}</h5>
+                            <span class="activity-time">
+                                <i class="fas fa-clock"></i>
+                                {{ activity.timestamp|date:"M d, Y g:i A" }}
+                            </span>
+                        </div>
+                        
+                        <div class="activity-details">
+                            <div class="activity-meta">
+                                <span class="activity-action">
+                                    <i class="fas fa-tag"></i>
+                                    {{ activity.get_action_display|default:activity.action|title }}
+                                </span>
+                                
+                                {% if activity.ip_address %}
+                                    <span class="activity-ip">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        {{ activity.ip_address }}
+                                    </span>
+                                {% endif %}
+                                
+                                {% if activity.user_agent %}
+                                    <span class="activity-device">
+                                        <i class="fas fa-desktop"></i>
+                                        {% if 'Mobile' in activity.user_agent %}
+                                            Mobile Device
+                                        {% elif 'Tablet' in activity.user_agent %}
+                                            Tablet
+                                        {% else %}
+                                            Desktop
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if activity.timestamp %}
+                                <div class="activity-relative-time">
+                                    {{ activity.timestamp|timesince }} ago
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+        <div class="card-footer">
+            <nav aria-label="Activity pagination">
+                <ul class="pagination justify-content-center mb-0">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">
+                                <i class="fas fa-angle-double-left"></i>
+                                First
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-angle-left"></i>
+                                Previous
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page_num in page_obj.paginator.page_range %}
+                        {% if page_num == page_obj.number %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% elif page_num >= page_obj.number|add:"-2" and page_num <= page_obj.number|add:"2" %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                            </li>
+                        {% elif page_num == 1 or page_num == page_obj.paginator.num_pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                            </li>
+                        {% elif page_num == page_obj.number|add:"-3" or page_num == page_obj.number|add:"3" %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                Next
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                                Last
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} 
+                    of {{ page_obj.paginator.count }} activities
+                </small>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% else %}
+<!-- No Activity -->
+<div class="card">
+    <div class="card-body text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-history text-muted" style="font-size: 64px; opacity: 0.3;"></i>
+        </div>
+        <h3 class="text-muted">No activity yet</h3>
+        <p class="text-muted">
+            Your activity will appear here as you use the application.
+        </p>
+        <div class="mt-4">
+            <a href="{% url 'frontend:dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-tachometer-alt"></i>
+                Go to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Security Info -->
+<div class="row mt-4">
+    <div class="col-md-8 mx-auto">
+        <div class="alert alert-info">
+            <h5 class="alert-heading">
+                <i class="fas fa-shield-alt"></i>
+                Security Information
+            </h5>
+            <p class="mb-2">
+                Your activity is logged for security purposes. This helps you monitor access to your account and detect any unauthorized usage.
+            </p>
+            <hr>
+            <p class="mb-0">
+                <strong>Logged Information:</strong> Actions performed, timestamps, IP addresses, and device types.
+                <br>
+                <strong>Data Retention:</strong> Activity logs are kept for security auditing purposes.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.activity-timeline {
+    position: relative;
+}
+
+.activity-item {
+    position: relative;
+    display: flex;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item:hover {
+    background-color: #f8f9fa;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.activity-icon i {
+    font-size: 16px;
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.activity-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+    flex: 1;
+}
+
+.activity-time {
+    color: #6c757d;
+    font-size: 14px;
+    white-space: nowrap;
+    margin-left: 16px;
+}
+
+.activity-details {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 4px;
+}
+
+.activity-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.activity-relative-time {
+    font-style: italic;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+/* Timeline line */
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 44px;
+    top: 60px;
+    bottom: 20px;
+    width: 2px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+/* Hide timeline for last item */
+.activity-item.last .activity-timeline::before {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .activity-item {
+        padding: 16px;
+    }
+    
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .activity-time {
+        margin-left: 0;
+        margin-top: 4px;
+    }
+    
+    .activity-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 16px;
+    }
+}
+
+/* Responsive pagination */
+@media (max-width: 576px) {
+    .pagination {
+        font-size: 14px;
+    }
+    
+    .page-link {
+        padding: 0.5rem 0.75rem;
+    }
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,216 @@
+{% extends 'layouts/base.html' %}
+{% load home_filters %}
+
+{% block title %}{{ title }} - Credentials Manager{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="content-header">
+        <div class="content-header-left">
+            <div class="page-title">
+                <h1>{{ title }}</h1>
+                <p class="page-description">
+                    {% if note %}Update your secure note{% else %}Create a new encrypted note{% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="content-header-right">
+            {% if note %}
+            <a href="{% url 'frontend:note_detail' note.pk %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Back to Details
+            </a>
+            {% else %}
+            <a href="{% url 'frontend:notes_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Back to Notes
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="form-container">
+        <form method="post" class="note-form">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <div class="section-header">
+                    <h3>Basic Information</h3>
+                    <p>Identify and categorize your note</p>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group form-group-large">
+                        <label for="{{ form.title.id_for_label }}" class="form-label required">
+                            Title
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="form-error">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.type.id_for_label }}" class="form-label required">
+                            Type
+                        </label>
+                        {{ form.type }}
+                        {% if form.type.errors %}
+                            <div class="form-error">{{ form.type.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-header">
+                    <h3>Content</h3>
+                    <p>Your secure encrypted note content</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.content.id_for_label }}" class="form-label required">
+                        Content
+                    </label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        <div class="form-error">{{ form.content.errors.0 }}</div>
+                    {% endif %}
+                    {% if form.content.help_text %}
+                        <div class="form-help">{{ form.content.help_text }}</div>
+                    {% endif %}
+                    <div class="character-count">
+                        <span id="charCount">0 characters</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-header">
+                    <h3>Additional Information</h3>
+                    <p>Organization and settings</p>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group form-group-large">
+                        <label for="{{ form.tags.id_for_label }}" class="form-label">
+                            Tags
+                        </label>
+                        {{ form.tags }}
+                        {% if form.tags.errors %}
+                            <div class="form-error">{{ form.tags.errors.0 }}</div>
+                        {% endif %}
+                        {% if form.tags.help_text %}
+                            <div class="form-help">{{ form.tags.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Options</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                {{ form.is_favorite }}
+                                <span class="checkbox-text">
+                                    <i class="fas fa-star"></i>
+                                    Mark as favorite
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                {% if note %}
+                <button type="button" class="btn btn-danger" onclick="showDeleteModal()">
+                    <i class="fas fa-trash"></i>
+                    Delete
+                </button>
+                {% endif %}
+                
+                <div class="form-actions-right">
+                    <a href="{% if note %}{% url 'frontend:note_detail' note.pk %}{% else %}{% url 'frontend:notes_list' %}{% endif %}" 
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        {% if note %}Update{% else %}Save{% endif %} Note
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+{% if note %}
+<div class="modal-overlay" id="deleteModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button type="button" class="modal-close" onclick="hideDeleteModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete the note "<strong>{{ note.title }}</strong>"?</p>
+            <p class="warning-text">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="hideDeleteModal()">Cancel</button>
+            <form method="post" action="{% url 'frontend:note_delete' note.pk %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+{% if note %}
+function showDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+{% endif %}
+
+// Initialize form functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-resize textarea and character count
+    const textarea = document.querySelector('textarea');
+    const charCount = document.getElementById('charCount');
+    
+    if (textarea && charCount) {
+        function updateTextarea() {
+            // Auto resize
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+            
+            // Character count
+            const count = textarea.value.length;
+            charCount.textContent = count + ' characters';
+        }
+        
+        textarea.addEventListener('input', updateTextarea);
+        updateTextarea(); // Initial call
+    }
+    
+    {% if note %}
+    // Modal close functionality
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDeleteModal();
+            }
+        });
+    }
+    {% endif %}
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,416 @@
+{% extends 'layouts/base.html' %}
+{% load home_filters %}
+
+{% block title %}Dashboard - Credentials Manager{% endblock %}
+
+{% block breadcrumb_items %}
+<span class="breadcrumb-separator">/</span>
+<span class="breadcrumb-item active">Dashboard</span>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Overview of your secure credentials and notes</p>
+        </div>
+        <div class="d-flex gap-3">
+            <a href="{% url 'frontend:credential_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Add Credential
+            </a>
+            <a href="{% url 'frontend:note_create' %}" class="btn btn-secondary">
+                <i class="fas fa-plus"></i>
+                Add Note
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-key"></i>
+        </div>
+        <div class="stat-value">{{ total_credentials }}</div>
+        <div class="stat-label">Total Credentials</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--cursor-green-light);">
+            <i class="fas fa-sticky-note"></i>
+        </div>
+        <div class="stat-value">{{ total_notes }}</div>
+        <div class="stat-label">Secure Notes</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.1); color: var(--cursor-yellow-light);">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-value">{{ favorite_credentials|add:favorite_notes }}</div>
+        <div class="stat-label">Favorites</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(139, 92, 246, 0.1); color: var(--cursor-purple-light);">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-value">{{ recent_activities|length }}</div>
+        <div class="stat-label">Recent Activities</div>
+    </div>
+</div>
+
+<!-- Content Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: var(--space-6);">
+    <!-- Recent Credentials -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Recent Credentials</h3>
+                <a href="{% url 'frontend:credentials_list' %}" class="btn btn-sm btn-outline">
+                    <i class="fas fa-arrow-right"></i>
+                    View All
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if recent_credentials %}
+                <div class="list-group">
+                    {% for credential in recent_credentials %}
+                        <div class="list-item">
+                            <div class="list-item-icon">
+                                <i class="{{ credential.get_type_icon }}"></i>
+                            </div>
+                            <div class="list-item-content">
+                                <div class="list-item-header">
+                                    <a href="{% url 'frontend:credential_detail' credential.pk %}" class="list-item-title">
+                                        {{ credential.label }}
+                                    </a>
+                                    {% if credential.is_favorite %}
+                                        <i class="fas fa-star" style="color: var(--cursor-yellow-light); font-size: var(--font-size-xs);"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="list-item-subtitle">{{ credential.get_type_display }}</div>
+                            </div>
+                            <div class="list-item-meta">{{ credential.updated_at|timesince }} ago</div>
+                        </div>
+                        {% if not forloop.last %}
+                            <div class="list-divider"></div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h4 class="empty-state-title">No credentials yet</h4>
+                    <p class="empty-state-description">Start by creating your first credential to securely store your passwords.</p>
+                    <a href="{% url 'frontend:credential_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Create First Credential
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Recent Notes -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="card-title">Recent Notes</h3>
+                <a href="{% url 'frontend:notes_list' %}" class="btn btn-sm btn-outline">
+                    <i class="fas fa-arrow-right"></i>
+                    View All
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if recent_notes %}
+                <div class="list-group">
+                    {% for note in recent_notes %}
+                        <div class="list-item">
+                            <div class="list-item-icon" style="color: var(--cursor-green-light);">
+                                <i class="{{ note.get_type_icon }}"></i>
+                            </div>
+                            <div class="list-item-content">
+                                <div class="list-item-header">
+                                    <a href="{% url 'frontend:note_detail' note.pk %}" class="list-item-title">
+                                        {{ note.title }}
+                                    </a>
+                                    {% if note.is_favorite %}
+                                        <i class="fas fa-star" style="color: var(--cursor-yellow-light); font-size: var(--font-size-xs);"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="list-item-subtitle">{{ note.get_type_display }}</div>
+                            </div>
+                            <div class="list-item-meta">{{ note.updated_at|timesince }} ago</div>
+                        </div>
+                        {% if not forloop.last %}
+                            <div class="list-divider"></div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-sticky-note"></i>
+                    </div>
+                    <h4 class="empty-state-title">No notes yet</h4>
+                    <p class="empty-state-description">Create secure notes to store sensitive information and important details.</p>
+                    <a href="{% url 'frontend:note_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Create First Note
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+{% if recent_activities %}
+<div class="card" style="margin-top: var(--space-8);">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="card-title">Recent Activity</h3>
+            <a href="{% url 'frontend:activity_log' %}" class="btn btn-sm btn-outline">
+                <i class="fas fa-arrow-right"></i>
+                View All Activity
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="activity-timeline">
+            {% for activity in recent_activities %}
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="{{ activity.get_action_icon }}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-description">
+                            <strong>{{ activity.get_action_display }}</strong>
+                            {% if activity.credential %}
+                                credential "<a href="{% url 'frontend:credential_detail' activity.credential.pk %}">{{ activity.credential.label }}</a>"
+                            {% elif activity.note %}
+                                note "<a href="{% url 'frontend:note_detail' activity.note.pk %}">{{ activity.note.title }}</a>"
+                            {% endif %}
+                        </div>
+                        <div class="activity-meta">
+                            <span class="activity-time">{{ activity.timestamp|timesince }} ago</span>
+                            {% if activity.ip_address %}
+                                <span class="activity-separator">•</span>
+                                <span class="activity-ip">{{ activity.ip_address }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+/* List Components */
+.list-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+}
+
+.list-item-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent-primary);
+    font-size: var(--font-size-lg);
+    flex-shrink: 0;
+}
+
+.list-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.list-item-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
+}
+
+.list-item-title {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    transition: color var(--transition-fast);
+}
+
+.list-item-title:hover {
+    color: var(--color-accent-primary);
+}
+
+.list-item-subtitle {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+}
+
+.list-item-meta {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+    flex-shrink: 0;
+}
+
+.list-divider {
+    height: 1px;
+    background-color: var(--color-border-primary);
+    margin: 0;
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: var(--space-8) var(--space-4);
+}
+
+.empty-state-icon {
+    color: var(--color-text-tertiary);
+    font-size: 48px;
+    margin-bottom: var(--space-4);
+    opacity: 0.3;
+}
+
+.empty-state-title {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.empty-state-description {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    margin: 0 0 var(--space-6) 0;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Activity Timeline */
+.activity-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.activity-item {
+    display: flex;
+    gap: var(--space-3);
+    align-items: flex-start;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent-primary);
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+    margin-top: var(--space-1);
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-description {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+    margin-bottom: var(--space-1);
+}
+
+.activity-description a {
+    color: var(--color-accent-primary);
+    text-decoration: none;
+}
+
+.activity-description a:hover {
+    text-decoration: underline;
+}
+
+.activity-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.activity-separator {
+    color: var(--color-text-tertiary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: var(--space-4);
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .list-item {
+        padding: var(--space-3) 0;
+    }
+    
+    .list-item-icon {
+        width: 32px;
+        height: 32px;
+        font-size: var(--font-size-base);
+    }
+    
+    .empty-state {
+        padding: var(--space-6) var(--space-2);
+    }
+    
+    .activity-item {
+        gap: var(--space-2);
+    }
+    
+    .activity-icon {
+        width: 28px;
+        height: 28px;
+        font-size: var(--font-size-xs);
+    }
+}
+</style>
+{% endblock %} 

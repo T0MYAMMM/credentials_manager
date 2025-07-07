@@ -1,0 +1,351 @@
+{% extends 'layouts/base.html' %}
+{% load home_filters %}
+
+{% block title %}{{ note.title }} - Credentials Manager{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'frontend:dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-separator">/</span>
+<a href="{% url 'frontend:notes_list' %}" class="breadcrumb-item">Notes</a>
+<span class="breadcrumb-separator">/</span>
+<span class="breadcrumb-item active">{{ note.title }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">{{ note.title }}</h1>
+            <p class="page-subtitle">Secure note details</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-warning" onclick="toggleFavorite('note', {{ note.pk }}, this.querySelector('i'))">
+                <i class="fa{% if note.is_favorite %}s{% else %}r{% endif %} fa-star"></i>
+                {% if note.is_favorite %}Remove from{% else %}Add to{% endif %} Favorites
+            </button>
+            <a href="{% url 'frontend:note_edit' note.pk %}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Note Content</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Title</label>
+                            <div class="form-control-plaintext">{{ note.title }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <div class="form-control-plaintext">
+                                <span class="badge badge-secondary">{{ note.category|title }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <div class="note-content">
+                        {{ note.get_decrypted_content|linebreaks }}
+                    </div>
+                </div>
+                
+                {% if note.tags %}
+                <div class="form-group">
+                    <label class="form-label">Tags</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                        {% for tag in note.tags_list %}
+                            <span style="background-color: var(--bg-canvas-subtle); color: var(--fg-muted); padding: 4px 12px; border-radius: 6px; font-size: 12px;">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="mb-0">Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-primary w-100" onclick="copyNoteContent()">
+                            <i class="fas fa-copy"></i>
+                            Copy Content
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-secondary w-100" onclick="printNote()">
+                            <i class="fas fa-print"></i>
+                            Print Note
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{% url 'frontend:export_data' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-download"></i>
+                            Export Data
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted d-block">Created</small>
+                    <strong>{{ note.created_at|date:"F d, Y \a\t g:i A" }}</strong>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted d-block">Last Modified</small>
+                    <strong>{{ note.updated_at|date:"F d, Y \a\t g:i A" }}</strong>
+                </div>
+                
+                {% if note.last_accessed %}
+                <div class="mb-3">
+                    <small class="text-muted d-block">Last Accessed</small>
+                    <strong>{{ note.last_accessed|date:"F d, Y \a\t g:i A" }}</strong>
+                </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <small class="text-muted d-block">Category</small>
+                    <strong>{{ note.category|title }}</strong>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted d-block">Favorite</small>
+                    <strong>
+                        {% if note.is_favorite %}
+                            <i class="fas fa-star text-warning"></i> Yes
+                        {% else %}
+                            <i class="far fa-star text-muted"></i> No
+                        {% endif %}
+                    </strong>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted d-block">Content Length</small>
+                    <strong>{{ note.get_decrypted_content|length }} characters</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'frontend:note_edit' note.pk %}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit Note
+                    </a>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                        <i class="fas fa-trash"></i> Delete Note
+                    </button>
+                    <a href="{% url 'frontend:notes_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-list"></i> Back to Notes
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Security Info -->
+        <div class="alert alert-info mt-3">
+            <h6 class="alert-heading">
+                <i class="fas fa-shield-alt"></i>
+                Security
+            </h6>
+            <small>
+                This note is encrypted and stored securely. Only you can access its content.
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Note</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the note "<strong>{{ note.title }}</strong>"?</p>
+                <p class="text-danger"><strong>This action cannot be undone!</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'frontend:note_delete' note.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.note-content {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 20px;
+    min-height: 200px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.note-content p {
+    margin-bottom: 1rem;
+}
+
+.note-content p:last-child {
+    margin-bottom: 0;
+}
+
+.form-control-plaintext {
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.badge {
+    font-size: 12px;
+    padding: 6px 12px;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 15px 20px;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 16px;
+    }
+    
+    .row .col-md-4 {
+        margin-bottom: 10px;
+    }
+}
+
+@media print {
+    .card-header,
+    .btn,
+    .alert,
+    .modal,
+    .page-header .d-flex > div:last-child {
+        display: none !important;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: none;
+    }
+    
+    .note-content {
+        border: 1px solid #000;
+        background: white;
+    }
+}
+</style>
+
+<script>
+function copyNoteContent() {
+    const content = `{{ note.get_decrypted_content|escapejs }}`;
+    navigator.clipboard.writeText(content).then(function() {
+        // Show success message
+        const toast = document.createElement('div');
+        toast.className = 'alert alert-success alert-dismissible fade show position-fixed';
+        toast.style = 'top: 20px; right: 20px; z-index: 9999;';
+        toast.innerHTML = '<strong>Copied!</strong> Note content copied to clipboard.<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }).catch(function() {
+        alert('Failed to copy content. Please try manually selecting and copying the text.');
+    });
+}
+
+function printNote() {
+    window.print();
+}
+
+// Toggle favorite function (should be included in main.js but defined here as backup)
+function toggleFavorite(type, id, iconElement) {
+    fetch('{% url "frontend:toggle_favorite" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || 
+                          document.querySelector('meta[name=csrf-token]').getAttribute('content')
+        },
+        body: `type=${type}&id=${id}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.is_favorite) {
+                iconElement.className = 'fas fa-star';
+                iconElement.parentElement.innerHTML = '<i class="fas fa-star"></i> Remove from Favorites';
+            } else {
+                iconElement.className = 'far fa-star';
+                iconElement.parentElement.innerHTML = '<i class="far fa-star"></i> Add to Favorites';
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %} 

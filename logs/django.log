@@ -1,0 +1,476 @@
+INFO 2025-07-07 18:02:15,845 autoreload 21679 140308031454080 Watching for file changes with StatReloader
+INFO 2025-07-07 18:04:04,541 autoreload 23378 140126956268416 Watching for file changes with StatReloader
+INFO 2025-07-07 18:06:30,924 autoreload 24099 140185406385024 Watching for file changes with StatReloader
+INFO 2025-07-07 18:06:43,960 basehttp 24099 140185312421568 "GET / HTTP/1.1" 302 0
+ERROR 2025-07-07 18:06:44,127 log 24099 140185312421568 Internal Server Error: /auth/login/
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/authentication/views.py", line 49, in login_view
+    return render(request, 'accounts/login.html', {'form': form})
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: accounts/login.html
+ERROR 2025-07-07 18:06:44,314 basehttp 24099 140185312421568 "GET /auth/login/?next=/ HTTP/1.1" 500 104623
+INFO 2025-07-07 18:06:44,446 basehttp 24099 140185312421568 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 200 29444
+INFO 2025-07-07 18:06:44,447 basehttp 24099 140185304028864 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 200 14803
+INFO 2025-07-07 18:06:44,741 basehttp 24099 140185312421568 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 200 43
+INFO 2025-07-07 18:06:44,833 basehttp 24099 140185312421568 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 200 4692
+WARNING 2025-07-07 18:06:45,040 log 24099 140185312421568 Not Found: /favicon.ico
+WARNING 2025-07-07 18:06:45,041 basehttp 24099 140185312421568 "GET /favicon.ico HTTP/1.1" 404 21353
+INFO 2025-07-07 18:12:13,586 autoreload 25418 140698409794432 Watching for file changes with StatReloader
+INFO 2025-07-07 18:12:18,860 basehttp 25418 140698315646656 "GET / HTTP/1.1" 302 0
+INFO 2025-07-07 18:12:18,897 basehttp 25418 140698315646656 "GET /auth/login/?next=/ HTTP/1.1" 200 18902
+INFO 2025-07-07 18:12:18,993 basehttp 25418 140698315646656 "GET /static/frontend/css/main.css HTTP/1.1" 200 11718
+INFO 2025-07-07 18:12:18,996 basehttp 25418 140698315646656 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:12:19,057 basehttp 25418 140698315646656 "GET /static/frontend/js/main.js HTTP/1.1" 200 16620
+INFO 2025-07-07 18:12:19,071 basehttp 25418 140698307253952 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:12:19,143 basehttp 25418 140698315646656 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:12:19,147 basehttp 25418 140698307253952 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+WARNING 2025-07-07 18:12:19,232 basehttp 25418 140698315646656 "GET /static/img/favicon.ico HTTP/1.1" 404 1972
+ERROR 2025-07-07 18:12:29,623 log 25418 140698307253952 Internal Server Error: /auth/login/
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: backend_activitylog
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/authentication/views.py", line 40, in login_view
+    log_activity(user, 'login', f'User logged in from {get_client_ip(request)}', request)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/authentication/views.py", line 21, in log_activity
+    ActivityLog.objects.create(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        user=user,
+        ^^^^^^^^^^
+    ...<3 lines>...
+        user_agent=request.META.get('HTTP_USER_AGENT', '')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/query.py", line 663, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/query.py", line 1868, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/models/sql/compiler.py", line 1882, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/debug_toolbar/panels/sql/tracking.py", line 235, in execute
+    return self._record(super().execute, sql, params)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/debug_toolbar/panels/sql/tracking.py", line 160, in _record
+    return method(sql, params)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such table: backend_activitylog
+ERROR 2025-07-07 18:12:29,691 basehttp 25418 140698307253952 "POST /auth/login/?next=/ HTTP/1.1" 500 204562
+INFO 2025-07-07 18:14:16,953 autoreload 25418 140698409794432 /home/t0myam/projects/private-django/credentials_manager/core/settings.py changed, reloading.
+INFO 2025-07-07 18:14:17,616 autoreload 25792 140706489277312 Watching for file changes with StatReloader
+INFO 2025-07-07 18:15:02,140 autoreload 26461 139695901711232 Watching for file changes with StatReloader
+INFO 2025-07-07 18:15:14,217 basehttp 26461 139695807784640 "GET /auth/login/?next=/ HTTP/1.1" 200 18902
+INFO 2025-07-07 18:15:16,093 basehttp 26461 139695807784640 "GET /auth/register/ HTTP/1.1" 200 20327
+INFO 2025-07-07 18:15:16,125 basehttp 26461 139695799391936 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:15:16,125 basehttp 26461 139695807784640 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:15:16,138 basehttp 26461 139695799391936 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:15:16,180 basehttp 26461 139695807784640 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:15:45,943 basehttp 26461 139695807784640 "POST /auth/register/ HTTP/1.1" 200 21218
+INFO 2025-07-07 18:15:59,347 basehttp 26461 139695807784640 "POST /auth/register/ HTTP/1.1" 200 21187
+INFO 2025-07-07 18:15:59,386 basehttp 26461 139695807784640 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:15:59,393 basehttp 26461 139695799391936 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:16:20,519 basehttp 26461 139695799391936 "POST /auth/register/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:16:20,610 basehttp 26461 139695799391936 "GET / HTTP/1.1" 200 27969
+ERROR 2025-07-07 18:16:28,422 log 26461 139695799391936 Internal Server Error: /credentials/
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/urls/base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^
+KeyError: 'home'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/frontend/views.py", line 72, in credentials_list
+    return render(request, 'frontend/credentials_list.html', context)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/test/utils.py", line 114, in instrumented_test_render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/test/utils.py", line 114, in instrumented_test_render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/urls/base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'home' is not a registered namespace
+ERROR 2025-07-07 18:16:28,476 basehttp 26461 139695799391936 "GET /credentials/ HTTP/1.1" 500 203154
+INFO 2025-07-07 18:23:00,321 autoreload 28169 139845972384640 Watching for file changes with StatReloader
+INFO 2025-07-07 18:23:06,267 basehttp 28169 139845877884608 "GET / HTTP/1.1" 200 27541
+INFO 2025-07-07 18:23:06,315 basehttp 28169 139845877884608 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:23:06,316 basehttp 28169 139845869491904 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:23:06,319 basehttp 28169 139845877884608 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:23:06,319 basehttp 28169 139845869491904 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:23:06,363 basehttp 28169 139845869491904 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:23:06,371 basehttp 28169 139845877884608 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:23:13,074 basehttp 28169 139845869491904 "GET /credentials/ HTTP/1.1" 200 25360
+INFO 2025-07-07 18:23:22,917 basehttp 28169 139845869491904 "GET /notes/ HTTP/1.1" 200 25162
+ERROR 2025-07-07 18:23:26,522 log 28169 139845869491904 Internal Server Error: /search/
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/frontend/views.py", line 383, in search
+    return render(request, 'frontend/search.html', context)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: frontend/search.html
+ERROR 2025-07-07 18:23:26,552 basehttp 28169 139845869491904 "GET /search/ HTTP/1.1" 500 110351
+INFO 2025-07-07 18:24:00,043 autoreload 28464 140182705654656 Watching for file changes with StatReloader
+ERROR 2025-07-07 18:24:03,572 log 28464 140182611289792 Internal Server Error: /activity/
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/frontend/views.py", line 398, in activity_log
+    return render(request, 'frontend/activity_log.html', context)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: frontend/activity_log.html
+ERROR 2025-07-07 18:24:03,618 basehttp 28464 140182611289792 "GET /activity/ HTTP/1.1" 500 109200
+INFO 2025-07-07 18:24:17,398 basehttp 28464 140182611289792 "GET /export/ HTTP/1.1" 200 53
+ERROR 2025-07-07 18:24:23,939 log 28464 140182611289792 Internal Server Error: /search/
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/frontend/views.py", line 383, in search
+    return render(request, 'frontend/search.html', context)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: frontend/search.html
+ERROR 2025-07-07 18:24:23,968 basehttp 28464 140182611289792 "GET /search/ HTTP/1.1" 500 110351
+INFO 2025-07-07 18:28:24,432 autoreload 29379 140596989889408 Watching for file changes with StatReloader
+INFO 2025-07-07 18:28:32,346 basehttp 29379 140596886886080 "GET /search/ HTTP/1.1" 200 24892
+INFO 2025-07-07 18:28:32,389 basehttp 29379 140596886886080 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:28:32,392 basehttp 29379 140596886886080 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:28:32,393 basehttp 29379 140596895278784 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:28:32,394 basehttp 29379 140596895278784 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:28:32,444 basehttp 29379 140596886886080 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:28:32,448 basehttp 29379 140596895278784 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:28:41,751 basehttp 29379 140596886886080 "GET /search/ HTTP/1.1" 200 24892
+INFO 2025-07-07 18:28:43,616 basehttp 29379 140596886886080 "GET /notes/ HTTP/1.1" 200 25162
+INFO 2025-07-07 18:28:44,256 basehttp 29379 140596886886080 "GET /credentials/ HTTP/1.1" 200 25360
+INFO 2025-07-07 18:28:44,669 basehttp 29379 140596886886080 "GET / HTTP/1.1" 200 28369
+INFO 2025-07-07 18:28:46,783 basehttp 29379 140596886886080 "GET / HTTP/1.1" 200 28369
+INFO 2025-07-07 18:28:50,031 basehttp 29379 140596886886080 "GET /auth/profile/ HTTP/1.1" 200 28889
+INFO 2025-07-07 18:30:23,823 autoreload 29379 140596989889408 /home/t0myam/projects/private-django/credentials_manager/core/settings.py changed, reloading.
+INFO 2025-07-07 18:30:24,300 autoreload 29819 140333347769216 Watching for file changes with StatReloader
+INFO 2025-07-07 18:31:46,594 autoreload 30490 140666496048000 Watching for file changes with StatReloader
+INFO 2025-07-07 18:31:48,614 basehttp 30490 140666405349056 "GET / HTTP/1.1" 302 0
+INFO 2025-07-07 18:31:48,667 basehttp 30490 140666405349056 "GET /auth/login/?next=/ HTTP/1.1" 200 18902
+INFO 2025-07-07 18:31:51,053 basehttp 30490 140666405349056 "POST /auth/login/?next=/ HTTP/1.1" 200 19539
+INFO 2025-07-07 18:31:52,818 basehttp 30490 140666405349056 "GET /auth/register/ HTTP/1.1" 200 20327
+INFO 2025-07-07 18:32:27,369 basehttp 30490 140666405349056 "POST /auth/register/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:32:27,469 basehttp 30490 140666405349056 "GET / HTTP/1.1" 200 27976
+INFO 2025-07-07 18:32:27,557 basehttp 30490 140666405349056 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:32:27,562 basehttp 30490 140666405349056 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:32:27,562 basehttp 30490 140666396956352 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:32:27,615 basehttp 30490 140666405349056 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:32:30,871 basehttp 30490 140666405349056 "GET /credentials/add/ HTTP/1.1" 200 30464
+INFO 2025-07-07 18:33:48,499 basehttp 30490 140666405349056 "POST /credentials/add/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:33:48,572 basehttp 30490 140666405349056 "GET /credentials/1/ HTTP/1.1" 200 30910
+INFO 2025-07-07 18:33:48,661 basehttp 30490 140666405349056 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:33:48,662 basehttp 30490 140666396956352 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:34:43,112 basehttp 30490 140666405349056 "GET / HTTP/1.1" 200 31561
+INFO 2025-07-07 18:34:47,356 basehttp 30490 140666405349056 "GET /notes/add/ HTTP/1.1" 200 27037
+INFO 2025-07-07 18:35:23,322 basehttp 30490 140666405349056 "POST /notes/add/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:35:23,392 basehttp 30490 140666405349056 "GET /notes/1/ HTTP/1.1" 200 31904
+INFO 2025-07-07 18:35:32,474 basehttp 30490 140666405349056 "GET /notes/ HTTP/1.1" 200 27857
+INFO 2025-07-07 18:35:38,566 basehttp 30490 140666405349056 "GET /search/ HTTP/1.1" 200 24895
+INFO 2025-07-07 18:35:41,954 basehttp 30490 140666405349056 "GET /search/?query=git&type_filter=all HTTP/1.1" 200 27183
+INFO 2025-07-07 18:35:47,294 basehttp 30490 140666405349056 "GET /search/?query=notes&type_filter=all HTTP/1.1" 200 25451
+INFO 2025-07-07 18:35:50,557 basehttp 30490 140666405349056 "GET /search/?query=don&type_filter=all HTTP/1.1" 200 26774
+INFO 2025-07-07 18:35:53,757 basehttp 30490 140666405349056 "GET /credentials/ HTTP/1.1" 200 29385
+INFO 2025-07-07 18:35:54,442 basehttp 30490 140666405349056 "GET / HTTP/1.1" 200 34302
+INFO 2025-07-07 18:40:38,954 autoreload 32199 140698661407616 Watching for file changes with StatReloader
+INFO 2025-07-07 18:40:41,480 basehttp 32199 140698498102976 "GET / HTTP/1.1" 200 34304
+INFO 2025-07-07 18:40:41,533 basehttp 32199 140698498102976 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:40:41,534 basehttp 32199 140698489710272 "GET /static/frontend/js/main.js HTTP/1.1" 200 18731
+INFO 2025-07-07 18:40:41,536 basehttp 32199 140698498102976 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:40:41,538 basehttp 32199 140698489710272 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:40:41,578 basehttp 32199 140698481317568 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:40:41,591 basehttp 32199 140698489710272 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:40:46,699 basehttp 32199 140698489710272 "GET /credentials/1/ HTTP/1.1" 200 30506
+INFO 2025-07-07 18:40:46,730 basehttp 32199 140698489710272 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:41:18,626 basehttp 32199 140698489710272 "GET /notes/ HTTP/1.1" 200 27857
+INFO 2025-07-07 18:41:18,674 basehttp 32199 140698489710272 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:41:20,211 basehttp 32199 140698489710272 "GET /notes/1/ HTTP/1.1" 200 31486
+INFO 2025-07-07 18:41:23,940 basehttp 32199 140698489710272 "GET /notes/1/ HTTP/1.1" 200 31487
+INFO 2025-07-07 18:44:58,790 autoreload 33078 140061835574144 Watching for file changes with StatReloader
+INFO 2025-07-07 18:45:02,505 basehttp 33078 140061745047232 "GET / HTTP/1.1" 200 34321
+INFO 2025-07-07 18:45:02,561 basehttp 33078 140061745047232 "GET /static/frontend/js/main.js HTTP/1.1" 200 20924
+INFO 2025-07-07 18:45:04,989 basehttp 33078 140061745047232 "GET /credentials/1/ HTTP/1.1" 200 30509
+INFO 2025-07-07 18:45:11,281 basehttp 33078 140061745047232 "GET /credentials/1/edit/ HTTP/1.1" 200 32344
+INFO 2025-07-07 18:45:39,635 basehttp 33078 140061745047232 "GET /credentials/1/ HTTP/1.1" 200 30509
+INFO 2025-07-07 18:45:39,765 basehttp 33078 140061745047232 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:45:39,769 basehttp 33078 140061734557376 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:45:39,773 basehttp 33078 140061745047232 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:45:39,799 basehttp 33078 140061734557376 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:45:39,844 basehttp 33078 140061745047232 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:50:15,511 autoreload 34142 139831849261952 Watching for file changes with StatReloader
+ERROR 2025-07-07 18:50:21,922 log 34142 139831758776000 Internal Server Error: /
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/urls/base.py", line 81, in reverse
+    extra, resolver = resolver.namespace_dict[ns]
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^
+KeyError: 'accounts'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/t0myam/projects/private-django/credentials_manager/apps/frontend/views.py", line 43, in dashboard
+    return render(request, 'frontend/dashboard.html', context)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/test/utils.py", line 114, in instrumented_test_render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/test/utils.py", line 114, in instrumented_test_render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/defaulttags.py", line 327, in render
+    return nodelist.render(context)
+           ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/template/defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "/home/t0myam/.pyenv/versions/private/lib/python3.13/site-packages/django/urls/base.py", line 92, in reverse
+    raise NoReverseMatch("%s is not a registered namespace" % key)
+django.urls.exceptions.NoReverseMatch: 'accounts' is not a registered namespace
+ERROR 2025-07-07 18:50:22,651 basehttp 34142 139831758776000 "GET / HTTP/1.1" 500 199634
+INFO 2025-07-07 18:51:24,358 autoreload 34511 140688590056320 Watching for file changes with StatReloader
+INFO 2025-07-07 18:51:27,242 basehttp 34511 140688498845376 "GET / HTTP/1.1" 200 36246
+INFO 2025-07-07 18:51:27,269 basehttp 34511 140688498845376 "GET /static/frontend/css/main.css HTTP/1.1" 200 18287
+INFO 2025-07-07 18:51:27,271 basehttp 34511 140688490452672 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:51:27,273 basehttp 34511 140688490452672 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:51:27,320 basehttp 34511 140688490452672 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:51:27,350 basehttp 34511 140688498845376 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:51:27,382 basehttp 34511 140688490452672 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:51:33,665 basehttp 34511 140688490452672 "GET /credentials/ HTTP/1.1" 200 30730
+INFO 2025-07-07 18:51:38,532 basehttp 34511 140688490452672 "GET /notes/ HTTP/1.1" 200 29203
+INFO 2025-07-07 18:51:40,101 basehttp 34511 140688490452672 "GET /search/ HTTP/1.1" 200 26239
+INFO 2025-07-07 18:51:41,648 basehttp 34511 140688490452672 "GET / HTTP/1.1" 200 36243
+INFO 2025-07-07 18:51:46,164 basehttp 34511 140688490452672 "GET /credentials/1/ HTTP/1.1" 200 31717
+INFO 2025-07-07 18:51:55,564 basehttp 34511 140688490452672 "POST /credentials/1/delete/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:51:55,614 basehttp 34511 140688490452672 "GET /credentials/ HTTP/1.1" 200 27247
+INFO 2025-07-07 18:51:55,714 basehttp 34511 140688490452672 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:51:59,122 basehttp 34511 140688498845376 "GET /notes/ HTTP/1.1" 200 29204
+INFO 2025-07-07 18:52:00,178 basehttp 34511 140688498845376 "GET /notes/1/ HTTP/1.1" 200 32830
+INFO 2025-07-07 18:52:01,571 basehttp 34511 140688498845376 "POST /notes/1/delete/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:52:01,619 basehttp 34511 140688498845376 "GET /notes/ HTTP/1.1" 200 27063
+INFO 2025-07-07 18:52:06,663 basehttp 34511 140688479962816 "GET / HTTP/1.1" 200 35153
+INFO 2025-07-07 18:52:09,638 basehttp 34511 140688479962816 "GET /credentials/add/ HTTP/1.1" 200 31674
+INFO 2025-07-07 18:53:18,820 basehttp 34511 140688479962816 "POST /credentials/add/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:53:18,888 basehttp 34511 140688479962816 "GET /credentials/2/ HTTP/1.1" 200 32516
+INFO 2025-07-07 18:53:18,976 basehttp 34511 140688479962816 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:53:18,989 basehttp 34511 140688479962816 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:54:47,369 basehttp 34511 140688479962816 "GET /credentials/add/ HTTP/1.1" 200 31674
+INFO 2025-07-07 18:55:17,477 basehttp 34511 140688479962816 "POST /credentials/add/ HTTP/1.1" 302 0
+INFO 2025-07-07 18:55:17,668 basehttp 34511 140688479962816 "GET /credentials/3/ HTTP/1.1" 200 31670
+INFO 2025-07-07 18:55:17,849 basehttp 34511 140688479962816 "GET /static/frontend/css/main.css HTTP/1.1" 200 18581
+INFO 2025-07-07 18:55:17,863 basehttp 34511 140688479962816 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:55:26,110 basehttp 34511 140688479962816 "GET / HTTP/1.1" 200 36782
+INFO 2025-07-07 18:55:26,135 basehttp 34511 140688479962816 "GET /static/frontend/css/main.css HTTP/1.1" 200 18933
+INFO 2025-07-07 18:58:09,843 autoreload 35939 140197369158528 Watching for file changes with StatReloader
+INFO 2025-07-07 18:58:13,319 basehttp 35939 140197194888896 "GET / HTTP/1.1" 200 36784
+INFO 2025-07-07 18:58:13,352 basehttp 35939 140197194888896 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:58:13,354 basehttp 35939 140197278738112 "GET /static/frontend/js/main.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:58:13,356 basehttp 35939 140197278738112 "GET /static/debug_toolbar/css/toolbar.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:58:13,396 basehttp 35939 140197186496192 "GET /static/debug_toolbar/js/toolbar.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:58:13,419 basehttp 35939 140197278738112 "GET /static/debug_toolbar/css/print.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:58:13,421 basehttp 35939 140197194888896 "GET /static/debug_toolbar/js/utils.js HTTP/1.1" 304 0
+INFO 2025-07-07 18:58:18,713 basehttp 35939 140197194888896 "GET /auth/profile/ HTTP/1.1" 200 36793
+INFO 2025-07-07 18:58:32,757 basehttp 35939 140197194888896 "GET /activity/ HTTP/1.1" 200 53815
+INFO 2025-07-07 18:58:32,796 basehttp 35939 140197194888896 "GET /static/frontend/css/main.css HTTP/1.1" 304 0
+INFO 2025-07-07 18:58:34,955 basehttp 35939 140197194888896 "GET /auth/profile/ HTTP/1.1" 200 36793
+INFO 2025-07-07 18:58:35,853 basehttp 35939 140197194888896 "GET / HTTP/1.1" 200 36781
+INFO 2025-07-07 18:58:40,455 basehttp 35939 140197194888896 "GET /credentials/3/ HTTP/1.1" 200 31127
