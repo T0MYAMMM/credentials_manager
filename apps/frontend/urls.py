@@ -6,6 +6,8 @@ app_name = 'frontend'
 urlpatterns = [
     # Main dashboard
     path('', views.dashboard, name='dashboard'),
+    # Add home alias for backward compatibility with tests
+    path('home/', views.dashboard, name='home'),
     
     # Credentials management
     path('credentials/', views.credentials_list, name='credentials_list'),

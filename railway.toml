@@ -1,0 +1,18 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+healthcheckPath = "/health/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+
+[env]
+# Environment variables will be set in Railway dashboard
+PYTHONUNBUFFERED = "1"
+DISABLE_COLLECTSTATIC = "0"
+
+[[services]]
+[services.web]
+source = "."
+build = { cmd = "pip install -r requirements.txt" }
+start = { cmd = "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT" } 

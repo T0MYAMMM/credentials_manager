@@ -397,7 +397,7 @@ class FrontendTemplateTestCase(TestCase):
         response = self.client.get(url)
         
         # Check template used
-        self.assertTemplateUsed(response, 'frontend/dashboard.html')
+        self.assertTemplateUsed(response, 'dashboard/home.html')
         
         # Check context variables
         context = response.context
@@ -415,7 +415,7 @@ class FrontendTemplateTestCase(TestCase):
         url = reverse('frontend:credentials_list')
         response = self.client.get(url)
         
-        self.assertTemplateUsed(response, 'frontend/credentials_list.html')
+        self.assertTemplateUsed(response, 'dashboard/credentials_list.html')
         self.assertIn('page_obj', response.context)
         self.assertIn('form', response.context)
     
@@ -425,7 +425,7 @@ class FrontendTemplateTestCase(TestCase):
         url = reverse('frontend:credential_create')
         response = self.client.get(url)
         
-        self.assertTemplateUsed(response, 'frontend/credential_form.html')
+        self.assertTemplateUsed(response, 'dashboard/credential_form.html')
         self.assertIn('form', response.context)
         self.assertIn('title', response.context)
         self.assertEqual(response.context['title'], 'Add New Credential')
@@ -497,7 +497,7 @@ class FrontendFormErrorsTestCase(TestCase):
         
         # Should stay on form page
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'frontend/credential_form.html')
+        self.assertTemplateUsed(response, 'dashboard/credential_form.html')
         
         # Check form has errors
         form = response.context['form']
@@ -518,7 +518,7 @@ class FrontendFormErrorsTestCase(TestCase):
         
         # Should stay on form page
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'frontend/note_form.html')
+        self.assertTemplateUsed(response, 'dashboard/note_form.html')
         
         # Check form has errors
         form = response.context['form']

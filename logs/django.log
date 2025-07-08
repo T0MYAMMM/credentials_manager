@@ -879,3 +879,9 @@ WARNING 2025-07-08 06:24:16,373 log 53847 139692112561856 Not Found: /.well-know
 WARNING 2025-07-08 06:24:16,374 basehttp 53847 139692112561856 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17435
 WARNING 2025-07-08 06:24:16,449 log 53847 139692112561856 Not Found: /.well-known/appspecific/com.chrome.devtools.json
 WARNING 2025-07-08 06:24:16,450 basehttp 53847 139692112561856 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 17435
+WARNING 2025-07-08 08:18:28,993 log 74244 140059503672192 Not Found: /dashboard/credentials/171/delete/
+WARNING 2025-07-08 08:18:29,810 log 74244 140059503672192 Not Found: /dashboard/credentials/172/edit/
+WARNING 2025-07-08 08:18:31,110 log 74244 140059503672192 Not Found: /dashboard/credentials/174/
+WARNING 2025-07-08 08:26:11,560 log 76100 140435264609152 Not Found: /dashboard/credentials/171/delete/
+WARNING 2025-07-08 08:26:12,638 log 76100 140435264609152 Not Found: /dashboard/credentials/172/edit/
+WARNING 2025-07-08 08:26:14,337 log 76100 140435264609152 Not Found: /dashboard/credentials/174/
