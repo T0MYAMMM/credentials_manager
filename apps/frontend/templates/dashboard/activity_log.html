@@ -1,0 +1,894 @@
+{% extends 'layouts/base.html' %}
+{% load home_filters %}
+
+{% block title %}Activity Log - Credentials Manager{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'frontend:dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-separator">/</span>
+<span class="breadcrumb-item active">Activity Log</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Activity Log</h1>
+            <p class="page-subtitle">Track your account activity and security events</p>
+        </div>
+        <div class="d-flex gap-3">
+            <a href="{% url 'frontend:export_data' %}" class="btn btn-outline-primary">
+                <i class="fas fa-download"></i>
+                Export Data
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if page_obj %}
+<!-- Activity Timeline -->
+<div class="activity-container">
+    <div class="activity-header">
+        <div class="activity-stats">
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ page_obj.paginator.count }}</div>
+                    <div class="stat-label">Total Activities</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ page_obj|length }}</div>
+                    <div class="stat-label">This Page</div>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">Secure</div>
+                    <div class="stat-label">Encrypted Logs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="activity-timeline">
+        {% for activity in page_obj %}
+            <div class="activity-item {% if forloop.first %}first{% endif %} {% if forloop.last %}last{% endif %}">
+                <div class="activity-timeline-marker">
+                    <div class="activity-icon">
+                        {% if activity.action == 'login' %}
+                            <i class="fas fa-sign-in-alt activity-icon-success"></i>
+                        {% elif activity.action == 'logout' %}
+                            <i class="fas fa-sign-out-alt activity-icon-warning"></i>
+                        {% elif activity.action == 'create_credential' %}
+                            <i class="fas fa-plus-circle activity-icon-primary"></i>
+                        {% elif activity.action == 'update_credential' %}
+                            <i class="fas fa-edit activity-icon-info"></i>
+                        {% elif activity.action == 'delete_credential' %}
+                            <i class="fas fa-trash activity-icon-danger"></i>
+                        {% elif activity.action == 'view_credential' %}
+                            <i class="fas fa-eye activity-icon-secondary"></i>
+                        {% elif activity.action == 'create_note' %}
+                            <i class="fas fa-plus-circle activity-icon-primary"></i>
+                        {% elif activity.action == 'update_note' %}
+                            <i class="fas fa-edit activity-icon-info"></i>
+                        {% elif activity.action == 'delete_note' %}
+                            <i class="fas fa-trash activity-icon-danger"></i>
+                        {% elif activity.action == 'view_note' %}
+                            <i class="fas fa-eye activity-icon-secondary"></i>
+                        {% elif activity.action == 'search' %}
+                            <i class="fas fa-search activity-icon-info"></i>
+                        {% elif activity.action == 'export_data' %}
+                            <i class="fas fa-download activity-icon-success"></i>
+                        {% elif activity.action == 'favorite' %}
+                            <i class="fas fa-star activity-icon-warning"></i>
+                        {% else %}
+                            <i class="fas fa-circle activity-icon-muted"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="activity-content">
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <h3 class="activity-title">{{ activity.description }}</h3>
+                            <span class="activity-timestamp">
+                                <i class="fas fa-clock"></i>
+                                {{ activity.timestamp|date:"M d, Y g:i A" }}
+                            </span>
+                        </div>
+                        
+                        <div class="activity-details">
+                            <div class="activity-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-tag"></i>
+                                    <span class="meta-label">Action:</span>
+                                    <span class="meta-value">{{ activity.get_action_display|default:activity.action|title }}</span>
+                                </div>
+                                
+                                {% if activity.ip_address %}
+                                    <div class="meta-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span class="meta-label">IP Address:</span>
+                                        <span class="meta-value">{{ activity.ip_address }}</span>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if activity.user_agent %}
+                                    <div class="meta-item">
+                                        <i class="fas fa-desktop"></i>
+                                        <span class="meta-label">Device:</span>
+                                        <span class="meta-value">
+                                            {% if 'Mobile' in activity.user_agent %}
+                                                Mobile Device
+                                            {% elif 'Tablet' in activity.user_agent %}
+                                                Tablet
+                                            {% else %}
+                                                Desktop Computer
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="activity-relative-time">
+                                <i class="fas fa-history"></i>
+                                {{ activity.timestamp|timesince }} ago
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Enhanced Pagination -->
+    {% if page_obj.has_other_pages %}
+        <div class="pagination-container">
+            <nav aria-label="Activity pagination" class="pagination-nav">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" title="First page">
+                                <i class="fas fa-angle-double-left"></i>
+                                <span class="page-text">First</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" title="Previous page">
+                                <i class="fas fa-angle-left"></i>
+                                <span class="page-text">Previous</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page_num in page_obj.paginator.page_range %}
+                        {% if page_num == page_obj.number %}
+                            <li class="page-item active">
+                                <span class="page-link current">{{ page_num }}</span>
+                            </li>
+                        {% elif page_num >= page_obj.number|add:"-2" and page_num <= page_obj.number|add:"2" %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                            </li>
+                        {% elif page_num == 1 or page_num == page_obj.paginator.num_pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                            </li>
+                        {% elif page_num == page_obj.number|add:"-3" or page_num == page_obj.number|add:"3" %}
+                            <li class="page-item disabled">
+                                <span class="page-link dots">⋯</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" title="Next page">
+                                <span class="page-text">Next</span>
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" title="Last page">
+                                <span class="page-text">Last</span>
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            
+            <div class="pagination-info">
+                <div class="pagination-stats">
+                    Showing <span class="highlight">{{ page_obj.start_index }}</span> to 
+                    <span class="highlight">{{ page_obj.end_index }}</span> of 
+                    <span class="highlight">{{ page_obj.paginator.count }}</span> activities
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% else %}
+<!-- Enhanced Empty State -->
+<div class="empty-state">
+    <div class="empty-state-content">
+        <div class="empty-state-icon">
+            <i class="fas fa-history"></i>
+        </div>
+        <h2 class="empty-state-title">No Activity Yet</h2>
+        <p class="empty-state-description">
+            Your activity will appear here as you use the application. 
+            Start by adding credentials or notes to see your activity log.
+        </p>
+        <div class="empty-state-actions">
+            <a href="{% url 'frontend:dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-tachometer-alt"></i>
+                Go to Dashboard
+            </a>
+            <a href="{% url 'frontend:credential_create' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-plus"></i>
+                Add Credential
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Enhanced Security Info -->
+<div class="security-info-section">
+    <div class="security-info-card">
+        <div class="security-info-header">
+            <div class="security-info-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="security-info-title">
+                <h3>Security & Privacy Information</h3>
+                <p>Your activity is securely logged for account protection</p>
+            </div>
+        </div>
+        
+        <div class="security-info-content">
+            <div class="security-info-grid">
+                <div class="security-info-item">
+                    <h4><i class="fas fa-eye"></i> What We Log</h4>
+                    <p>Actions performed, timestamps, IP addresses, and device information for security monitoring.</p>
+                </div>
+                
+                <div class="security-info-item">
+                    <h4><i class="fas fa-lock"></i> Data Protection</h4>
+                    <p>All activity logs are encrypted and stored securely with access restricted to your account only.</p>
+                </div>
+                
+                <div class="security-info-item">
+                    <h4><i class="fas fa-clock"></i> Retention Policy</h4>
+                    <p>Activity logs are retained for security auditing and can help you detect unauthorized access.</p>
+                </div>
+                
+                <div class="security-info-item">
+                    <h4><i class="fas fa-download"></i> Data Export</h4>
+                    <p>You can export your activity data at any time using the export button above.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Activity Container */
+.activity-container {
+    margin-top: var(--space-6);
+}
+
+/* Activity Header with Stats */
+.activity-header {
+    margin-bottom: var(--space-8);
+}
+
+.activity-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+    border: 1px solid var(--color-border-primary);
+    transition: all var(--transition-normal);
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-border-secondary);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-xl);
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--cursor-blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-1);
+}
+
+/* Activity Timeline */
+.activity-timeline {
+    position: relative;
+    padding-left: var(--space-10);
+}
+
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, 
+        var(--color-border-primary) 0%, 
+        var(--color-border-secondary) 50%, 
+        var(--color-border-primary) 100%);
+    border-radius: var(--radius-full);
+}
+
+.activity-item {
+    position: relative;
+    margin-bottom: var(--space-8);
+}
+
+.activity-item.last {
+    margin-bottom: 0;
+}
+
+.activity-timeline-marker {
+    position: absolute;
+    left: -var(--space-10);
+    top: var(--space-3);
+}
+
+.activity-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-secondary);
+    border: 3px solid var(--color-bg-primary);
+    position: relative;
+    z-index: 2;
+}
+
+.activity-icon i {
+    font-size: var(--font-size-base);
+}
+
+/* Activity Icon Colors */
+.activity-icon-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--cursor-green-light);
+    border-color: var(--cursor-green);
+}
+
+.activity-icon-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--cursor-yellow-light);
+    border-color: var(--cursor-yellow);
+}
+
+.activity-icon-primary {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--cursor-blue-light);
+    border-color: var(--cursor-blue);
+}
+
+.activity-icon-info {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--cursor-purple-light);
+    border-color: var(--cursor-purple);
+}
+
+.activity-icon-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--cursor-red-light);
+    border-color: var(--cursor-red);
+}
+
+.activity-icon-secondary {
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-secondary);
+    border-color: var(--color-border-secondary);
+}
+
+.activity-icon-muted {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-tertiary);
+    border-color: var(--color-border-primary);
+}
+
+/* Activity Content */
+.activity-content {
+    margin-left: var(--space-4);
+}
+
+.activity-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    transition: all var(--transition-normal);
+}
+
+.activity-card:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+    gap: var(--space-4);
+}
+
+.activity-title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    flex: 1;
+    line-height: var(--line-height-snug);
+}
+
+.activity-timestamp {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+    background-color: var(--color-bg-tertiary);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-primary);
+}
+
+.activity-details {
+    margin-top: var(--space-4);
+}
+
+.activity-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+}
+
+.meta-item i {
+    width: 16px;
+    color: var(--color-text-tertiary);
+}
+
+.meta-label {
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+    min-width: 80px;
+}
+
+.meta-value {
+    color: var(--color-text-primary);
+}
+
+.activity-relative-time {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-style: italic;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-primary);
+    width: fit-content;
+}
+
+/* Enhanced Pagination */
+.pagination-container {
+    margin-top: var(--space-10);
+    padding: var(--space-6);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-xl);
+}
+
+.pagination-nav {
+    margin-bottom: var(--space-4);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.page-item {
+    display: flex;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-tertiary);
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    min-width: 44px;
+    justify-content: center;
+}
+
+.page-link:hover {
+    background-color: var(--color-bg-elevated);
+    border-color: var(--color-border-secondary);
+    color: var(--color-text-primary);
+    transform: translateY(-1px);
+}
+
+.page-item.active .page-link {
+    background-color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--color-bg-tertiary);
+}
+
+.page-item.disabled .page-link:hover {
+    transform: none;
+}
+
+.dots {
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--space-1);
+}
+
+.pagination-info {
+    text-align: center;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-primary);
+}
+
+.pagination-stats {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.highlight {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Enhanced Empty State */
+.empty-state {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-12);
+}
+
+.empty-state-content {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--space-12);
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+}
+
+.empty-state-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto var(--space-6);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--color-border-primary);
+}
+
+.empty-state-icon i {
+    font-size: 48px;
+    color: var(--cursor-blue-light);
+}
+
+.empty-state-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-4) 0;
+}
+
+.empty-state-description {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin: 0 0 var(--space-8) 0;
+}
+
+.empty-state-actions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Enhanced Security Info */
+.security-info-section {
+    margin-top: var(--space-12);
+}
+
+.security-info-card {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+}
+
+.security-info-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-8);
+    background-color: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border-primary);
+}
+
+.security-info-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.security-info-icon i {
+    font-size: var(--font-size-2xl);
+    color: var(--cursor-green-light);
+}
+
+.security-info-title h3 {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+}
+
+.security-info-title p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+}
+
+.security-info-content {
+    padding: var(--space-8);
+}
+
+.security-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+}
+
+.security-info-item {
+    padding: var(--space-5);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-normal);
+}
+
+.security-info-item:hover {
+    background-color: var(--color-bg-elevated);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.security-info-item h4 {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.security-info-item h4 i {
+    color: var(--cursor-blue-light);
+}
+
+.security-info-item p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .activity-timeline {
+        padding-left: var(--space-8);
+    }
+    
+    .activity-timeline::before {
+        left: 20px;
+    }
+    
+    .activity-timeline-marker {
+        left: -var(--space-8);
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: var(--space-4);
+    }
+    
+    .activity-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+    
+    .activity-timestamp {
+        align-self: flex-start;
+    }
+    
+    .activity-meta {
+        gap: var(--space-2);
+    }
+    
+    .meta-item {
+        flex-wrap: wrap;
+    }
+    
+    .meta-label {
+        min-width: auto;
+    }
+    
+    .pagination {
+        flex-wrap: wrap;
+        gap: var(--space-1);
+    }
+    
+    .page-text {
+        display: none;
+    }
+    
+    .security-info-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .security-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .empty-state-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .activity-timeline {
+        padding-left: var(--space-6);
+    }
+    
+    .activity-timeline::before {
+        left: 16px;
+    }
+    
+    .activity-timeline-marker {
+        left: -var(--space-6);
+    }
+    
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .activity-card {
+        padding: var(--space-4);
+    }
+    
+    .empty-state-content {
+        padding: var(--space-8);
+    }
+    
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .empty-state-icon i {
+        font-size: 32px;
+    }
+}
+</style>
+{% endblock %} 

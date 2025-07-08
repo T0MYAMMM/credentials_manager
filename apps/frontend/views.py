@@ -40,7 +40,7 @@ def dashboard(request):
         'credential_types': dashboard_data['credential_types'],
     }
     
-    return render(request, 'frontend/dashboard.html', context)
+    return render(request, 'dashboard/home.html', context)
 
 
 @login_required
@@ -69,7 +69,7 @@ def credentials_list(request):
         'total_count': credentials.count(),
     }
     
-    return render(request, 'frontend/credentials_list.html', context)
+    return render(request, 'dashboard/credentials_list.html', context)
 
 
 @login_required
@@ -90,7 +90,7 @@ def credential_detail(request, pk):
         'credential': credential,
     }
     
-    return render(request, 'frontend/credential_detail.html', context)
+    return render(request, 'dashboard/credential_detail.html', context)
 
 
 @login_required
@@ -121,7 +121,7 @@ def credential_create(request):
         'title': 'Add New Credential',
     }
     
-    return render(request, 'frontend/credential_form.html', context)
+    return render(request, 'dashboard/credential_form.html', context)
 
 
 @login_required
@@ -155,7 +155,7 @@ def credential_edit(request, pk):
         'title': f'Edit {credential.label}',
     }
     
-    return render(request, 'frontend/credential_form.html', context)
+    return render(request, 'dashboard/credential_form.html', context)
 
 
 @login_required
@@ -202,7 +202,7 @@ def notes_list(request):
         'total_count': notes.count(),
     }
     
-    return render(request, 'frontend/notes_list.html', context)
+    return render(request, 'dashboard/notes_list.html', context)
 
 
 @login_required
@@ -223,7 +223,7 @@ def note_detail(request, pk):
         'note': note,
     }
     
-    return render(request, 'frontend/note_detail.html', context)
+    return render(request, 'dashboard/note_detail.html', context)
 
 
 @login_required
@@ -254,7 +254,7 @@ def note_create(request):
         'title': 'Add New Note',
     }
     
-    return render(request, 'frontend/note_form.html', context)
+    return render(request, 'dashboard/note_form.html', context)
 
 
 @login_required
@@ -288,7 +288,7 @@ def note_edit(request, pk):
         'title': f'Edit {note.title}',
     }
     
-    return render(request, 'frontend/note_form.html', context)
+    return render(request, 'dashboard/note_form.html', context)
 
 
 @login_required
@@ -380,7 +380,7 @@ def search(request):
         'results': results,
     }
     
-    return render(request, 'frontend/search.html', context)
+    return render(request, 'dashboard/search.html', context)
 
 
 @login_required
@@ -395,4 +395,4 @@ def activity_log(request):
         'page_obj': page_obj,
     }
     
-    return render(request, 'frontend/activity_log.html', context) 
+    return render(request, 'dashboard/activity_log.html', context) 

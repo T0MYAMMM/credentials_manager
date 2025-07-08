@@ -387,14 +387,20 @@ function togglePassword(fieldId) {
         return;
     }
     
-    // Find the toggle button - it's in the input-group-append div
+    console.log('Toggling password for field:', fieldId, 'Current type:', field.type);
+    
+    // Find the toggle button - it's the first button in the input-group-append div
     const inputGroup = field.parentElement;
     const inputGroupAppend = inputGroup.querySelector('.input-group-append');
-    const toggleButton = inputGroupAppend ? inputGroupAppend.querySelector('button[onclick*="togglePassword"]') : null;
+    const toggleButton = inputGroupAppend ? inputGroupAppend.querySelector('button:first-child') : null;
     const icon = toggleButton ? toggleButton.querySelector('i') : null;
     
     if (!toggleButton || !icon) {
         console.error('Toggle button or icon not found for field:', fieldId);
+        console.log('InputGroup:', inputGroup);
+        console.log('InputGroupAppend:', inputGroupAppend);
+        console.log('ToggleButton:', toggleButton);
+        console.log('Icon:', icon);
         return;
     }
     
@@ -402,10 +408,12 @@ function togglePassword(fieldId) {
         field.type = 'text';
         icon.className = 'fas fa-eye-slash';
         toggleButton.setAttribute('title', 'Hide password');
+        console.log('Password shown');
     } else {
         field.type = 'password';
         icon.className = 'fas fa-eye';
         toggleButton.setAttribute('title', 'Show password');
+        console.log('Password hidden');
     }
 }
 
@@ -530,6 +538,71 @@ const Theme = {
     }
 };
 
+// Modal utilities
+const Modal = {
+    show(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent body scroll
+        }
+    },
+    
+    hide(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; // Restore body scroll
+        }
+    },
+    
+    init() {
+        // Handle modal triggers
+        document.querySelectorAll('[data-toggle="modal"]').forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = trigger.getAttribute('data-target');
+                if (target) {
+                    const modalId = target.replace('#', '');
+                    this.show(modalId);
+                }
+            });
+        });
+        
+        // Handle modal close buttons
+        document.querySelectorAll('[data-dismiss="modal"], .modal-close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const modal = closeBtn.closest('.modal');
+                if (modal) {
+                    this.hide(modal.id);
+                }
+            });
+        });
+        
+        // Handle modal overlay clicks (close modal when clicking outside)
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.hide(modal.id);
+                }
+            });
+        });
+        
+        // Handle escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const openModal = document.querySelector('.modal.show');
+                if (openModal) {
+                    this.hide(openModal.id);
+                }
+            }
+        });
+    }
+};
+
 // Initialize components
 ready(() => {
     // Initialize search manager
@@ -537,6 +610,9 @@ ready(() => {
     
     // Initialize theme
     Theme.init();
+    
+    // Initialize modal functionality
+    Modal.init();
     
     // Setup auto-save for forms
     const credentialForm = document.querySelector('#credential-form');
@@ -615,5 +691,6 @@ window.CredentialsManager = {
     Loading,
     Theme,
     FormUtils,
+    Modal,
     testPasswordToggle
 }; 

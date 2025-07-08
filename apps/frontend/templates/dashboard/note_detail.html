@@ -48,7 +48,7 @@
                         <div class="form-group">
                             <label class="form-label">Category</label>
                             <div class="form-control-plaintext">
-                                <span class="badge badge-secondary">{{ note.category|title }}</span>
+                                <span class="badge badge-primary">{{ note.type|title }}</span>
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                 <div class="form-group">
                     <label class="form-label">Content</label>
                     <div class="note-content">
-                        {{ note.get_decrypted_content|linebreaks }}
+                        {{ note.content|linebreaks }}
                     </div>
                 </div>
                 
@@ -129,7 +129,7 @@
                 
                 <div class="mb-3">
                     <small class="text-muted d-block">Category</small>
-                    <strong>{{ note.category|title }}</strong>
+                    <strong>{{ note.type|title }}</strong>
                 </div>
                 
                 <div class="mb-3">
@@ -145,7 +145,7 @@
                 
                 <div class="mb-3">
                     <small class="text-muted d-block">Content Length</small>
-                    <strong>{{ note.get_decrypted_content|length }} characters</strong>
+                    <strong>{{ note.content|length }} characters</strong>
                 </div>
             </div>
         </div>
@@ -183,7 +183,7 @@
 </div>
 
 <!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
+<div class="modal fade" id="deleteModal" tabindex="-1" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -209,19 +209,21 @@
 
 <style>
 .note-content {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    padding: 20px;
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
     min-height: 200px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
+    font-family: var(--font-family-sans);
+    line-height: var(--line-height-relaxed);
     white-space: pre-wrap;
     overflow-wrap: break-word;
+    color: var(--color-text-primary);
 }
 
 .note-content p {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
+    color: var(--color-text-primary);
 }
 
 .note-content p:last-child {
@@ -229,55 +231,23 @@
 }
 
 .form-control-plaintext {
-    padding: 8px 12px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-    font-weight: 500;
-}
-
-.badge {
-    font-size: 12px;
-    padding: 6px 12px;
-}
-
-.badge-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-.card {
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.card-header {
-    background: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-    padding: 15px 20px;
-}
-
-.card-title {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #212529;
-}
-
-.card-body {
-    padding: 20px;
+    padding: var(--space-3);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
 }
 
 @media (max-width: 768px) {
     .page-header .d-flex {
         flex-direction: column;
         align-items: flex-start !important;
-        gap: 16px;
+        gap: var(--space-4);
     }
     
     .row .col-md-4 {
-        margin-bottom: 10px;
+        margin-bottom: var(--space-3);
     }
 }
 
@@ -296,15 +266,15 @@
     }
     
     .note-content {
-        border: 1px solid #000;
-        background: white;
+        border: 1px solid var(--color-border-primary);
+        background: var(--color-bg-primary);
     }
 }
 </style>
 
 <script>
 function copyNoteContent() {
-    const content = `{{ note.get_decrypted_content|escapejs }}`;
+    const content = `{{ note.content|escapejs }}`;
     navigator.clipboard.writeText(content).then(function() {
         // Show success message
         const toast = document.createElement('div');

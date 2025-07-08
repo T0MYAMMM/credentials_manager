@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class FrontendConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+    label = 'apps_frontend'
     name = 'apps.frontend'
     verbose_name = 'Frontend'
     

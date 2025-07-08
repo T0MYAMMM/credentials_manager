@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class BackendConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+    label = 'apps_backend'
     name = 'apps.backend'
     verbose_name = 'Backend'
     

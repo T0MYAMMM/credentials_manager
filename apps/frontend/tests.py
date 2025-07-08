@@ -45,7 +45,7 @@ class FrontendViewsTestCase(TestCase):
     
     def test_dashboard_view(self):
         """Test dashboard page loads correctly"""
-        url = reverse('frontend:dashboard')
+        url = reverse('frontend:home')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, 200)
@@ -55,7 +55,7 @@ class FrontendViewsTestCase(TestCase):
     
     def test_dashboard_context(self):
         """Test dashboard context data"""
-        url = reverse('frontend:dashboard')
+        url = reverse('frontend:home')
         response = self.client.get(url)
         
         context = response.context
@@ -323,7 +323,7 @@ class FrontendPermissionsTestCase(TestCase):
     def test_unauthenticated_access(self):
         """Test that unauthenticated users are redirected to login"""
         urls_to_test = [
-            'frontend:dashboard',
+            'frontend:home',
             'frontend:credentials_list',
             'frontend:credential_create',
             'frontend:notes_list',
@@ -393,7 +393,7 @@ class FrontendTemplateTestCase(TestCase):
     
     def test_dashboard_template_context(self):
         """Test dashboard template receives correct context"""
-        url = reverse('frontend:dashboard')
+        url = reverse('frontend:home')
         response = self.client.get(url)
         
         # Check template used
@@ -615,7 +615,7 @@ class FrontendContextProcessorsTestCase(TestCase):
     
     def test_global_stats_context_processor(self):
         """Test that global stats are available in templates"""
-        url = reverse('frontend:dashboard')
+        url = reverse('frontend:home')
         response = self.client.get(url)
         
         # Check global stats are in context
@@ -627,7 +627,7 @@ class FrontendContextProcessorsTestCase(TestCase):
     
     def test_app_info_context_processor(self):
         """Test that app info is available in templates"""
-        url = reverse('frontend:dashboard')
+        url = reverse('frontend:home')
         response = self.client.get(url)
         
         # Check app info is in context

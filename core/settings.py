@@ -7,14 +7,13 @@ with proper security settings and environment variable configuration.
 
 import os
 import dj_database_url
-
 from pathlib import Path
-
 from decouple import config, Csv
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMPLATE_DIR = os.path.join(CORE_DIR, 'apps/frontend/templates')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config(
@@ -25,7 +24,7 @@ SECRET_KEY = config(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('SERVER', default='127.0.0.1')]
 
 # Application definition
 DJANGO_APPS = [
@@ -42,7 +41,7 @@ LOCAL_APPS = [
     'apps.backend',
     'apps.frontend',
     'apps.authentication',
-    'debug_toolbar',
+    #'debug_toolbar',
 ]
 
 THIRD_PARTY_APPS = [
@@ -93,7 +92,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database Configuration
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASE_URL = config('DATABASE_URL', default='postgresql://t0myam:enak@localhost:5432/private')
+DATABASE_URL = config('DATABASE_URL', default='')
 
 if DATABASE_URL:
     DATABASES = {
@@ -173,6 +172,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = config('LANGUAGE_CODE', default='en-us')
 TIME_ZONE = config('TIME_ZONE', default='UTC')
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)

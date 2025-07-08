@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
 
-class CustomUserCreationForm(UserCreationForm):
+class SignUpForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
         widget=forms.EmailInput(attrs={
@@ -58,8 +58,8 @@ class CustomUserCreationForm(UserCreationForm):
         password1 = self.cleaned_data.get('password1')
         
         # Enhanced password validation
-        if len(password1) < 12:
-            raise ValidationError("Password must be at least 12 characters long.")
+        if len(password1) < 8:
+            raise ValidationError("Password must be at least 8 characters long.")
         
         if not re.search(r'[A-Z]', password1):
             raise ValidationError("Password must contain at least one uppercase letter.")
@@ -84,7 +84,7 @@ class CustomUserCreationForm(UserCreationForm):
             user.save()
         return user
 
-class CustomAuthenticationForm(AuthenticationForm):
+class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({

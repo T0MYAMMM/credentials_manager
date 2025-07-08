@@ -1,0 +1,46 @@
+# Development Dependencies for Credentials Manager
+# Install with: pip install -r requirements-dev.txt
+
+# Include base requirements
+-r requirements.txt
+
+# Code Quality & Formatting
+black>=25.1.0                  # Code formatting
+flake8>=7.3.0                  # Code linting
+isort>=6.0.1                   # Import sorting
+mypy>=1.16.1                   # Type checking
+pre-commit>=4.0.0              # Pre-commit hooks
+
+# Testing Tools
+pytest>=8.4.1                  # Testing framework
+pytest-django>=4.11.0          # Django integration for pytest
+pytest-cov>=6.1.0              # Coverage plugin for pytest
+coverage>=7.9.2                # Test coverage
+factory-boy>=3.3.3             # Test data generation
+freezegun>=1.6.0               # Time mocking for tests
+
+# Development Tools
+django-debug-toolbar>=5.2.0    # Debug toolbar
+django-extensions>=4.1         # Development utilities
+ipython>=8.32.0                # Enhanced Python shell
+rich>=14.0.0                   # Rich text and beautiful formatting
+
+# Documentation Tools
+sphinx>=8.2.0                  # Documentation generator
+sphinx-rtd-theme>=3.1.1        # Read the Docs theme
+sphinx-autodoc-typehints>=2.4.4  # Type hints in docs
+
+# Security Tools
+bandit>=1.8.0                  # Security linting
+safety>=3.3.1                  # Dependency vulnerability scanner
+pip-audit>=2.9.0               # Vulnerability scanner
+
+# Performance & Profiling
+django-silk>=5.4.0             # Profiling and monitoring
+memory-profiler>=0.61.0        # Memory usage profiling
+
+# Database Tools
+django-migration-linter>=5.4.0 # Migration linting
+
+# API Development
+httpie>=3.2.5                  # HTTP client for API testing 

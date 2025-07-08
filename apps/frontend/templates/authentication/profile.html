@@ -1,0 +1,565 @@
+{% extends 'layouts/base.html' %}
+{% load home_filters %}
+
+{% block title %}Profile - Credentials Manager{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'frontend:dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-separator">/</span>
+<span class="breadcrumb-item active">Profile</span>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">User Profile</h1>
+            <p class="page-subtitle">Manage your account information and security settings</p>
+        </div>
+        <div class="d-flex gap-3">
+            <a href="{% url 'authentication:logout' %}" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="profile-grid">
+    <div class="profile-main">
+        <!-- User Information Card -->
+        <div class="card profile-info-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user"></i>
+                    Account Information
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="profile-info">
+                    <div class="profile-field">
+                        <label class="profile-label">Full Name</label>
+                        <div class="profile-value">
+                            {% if user.first_name or user.last_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                <span class="text-muted">Not provided</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label class="profile-label">Username</label>
+                        <div class="profile-value">{{ user.username }}</div>
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label class="profile-label">Email Address</label>
+                        <div class="profile-value">
+                            {% if user.email %}
+                                {{ user.email }}
+                            {% else %}
+                                <span class="text-muted">Not provided</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label class="profile-label">Date Joined</label>
+                        <div class="profile-value">{{ user.date_joined|date:"F d, Y" }}</div>
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label class="profile-label">Last Login</label>
+                        <div class="profile-value">
+                            {% if user.last_login %}
+                                {{ user.last_login|date:"F d, Y g:i A" }}
+                                <small class="text-muted d-block">{{ user.last_login|timesince }} ago</small>
+                            {% else %}
+                                <span class="text-muted">Never</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Card -->
+        {% if recent_activities %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-history"></i>
+                    Recent Activity
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="activity-list">
+                    {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            {% if activity.action == 'login' %}
+                                <i class="fas fa-sign-in-alt activity-icon-success"></i>
+                            {% elif activity.action == 'logout' %}
+                                <i class="fas fa-sign-out-alt activity-icon-warning"></i>
+                            {% elif activity.action == 'create' %}
+                                <i class="fas fa-plus activity-icon-primary"></i>
+                            {% elif activity.action == 'update' %}
+                                <i class="fas fa-edit activity-icon-info"></i>
+                            {% elif activity.action == 'delete' %}
+                                <i class="fas fa-trash activity-icon-danger"></i>
+                            {% else %}
+                                <i class="fas fa-circle activity-icon-muted"></i>
+                            {% endif %}
+                        </div>
+                        <div class="activity-details">
+                            <p class="activity-description">{{ activity.description }}</p>
+                            <div class="activity-meta">
+                                <span class="activity-time">
+                                    <i class="fas fa-clock"></i>
+                                    {{ activity.timestamp|date:"M d, Y g:i A" }}
+                                </span>
+                                {% if activity.ip_address %}
+                                    <span class="activity-ip">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        {{ activity.ip_address }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{% url 'frontend:activity_log' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-history"></i>
+                        View Full Activity Log
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="profile-sidebar">
+        <!-- Security Overview Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-shield-alt"></i>
+                    Security Overview
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="security-stats">
+                    <div class="security-item">
+                        <div class="security-icon security-icon-success">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div class="security-info">
+                            <h4>Password Protection</h4>
+                            <p class="security-status-good">Strong encryption</p>
+                        </div>
+                    </div>
+                    
+                    <div class="security-item">
+                        <div class="security-icon security-icon-primary">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="security-info">
+                            <h4>Session Status</h4>
+                            <p class="security-status-active">Currently active</p>
+                        </div>
+                    </div>
+                    
+                    <div class="security-item">
+                        <div class="security-icon security-icon-success">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="security-info">
+                            <h4>Data Encryption</h4>
+                            <p class="security-status-good">AES-256 enabled</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Stats Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Account Statistics
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="stats-list">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ user.credentials.count }}</div>
+                            <div class="stat-label">Stored Credentials</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-sticky-note"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ user.secure_notes.count }}</div>
+                            <div class="stat-label">Secure Notes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ favorites_count|default:0 }}</div>
+                            <div class="stat-label">Favorites</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Profile Grid Layout */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--space-8);
+    margin-top: var(--space-6);
+}
+
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* Profile Info Card */
+.profile-info-card {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.profile-field {
+    border-bottom: 1px solid var(--color-border-primary);
+    padding-bottom: var(--space-5);
+}
+
+.profile-field:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.profile-label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+    display: block;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.profile-value {
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-normal);
+}
+
+/* Security Stats */
+.security-stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.security-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    transition: all var(--transition-fast);
+}
+
+.security-item:hover {
+    background-color: var(--color-bg-elevated);
+    transform: translateY(-2px);
+}
+
+.security-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.security-icon-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--cursor-green-light);
+}
+
+.security-icon-primary {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--cursor-blue-light);
+}
+
+.security-icon i {
+    font-size: var(--font-size-lg);
+}
+
+.security-info h4 {
+    margin: 0 0 var(--space-1) 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.security-info p {
+    margin: 0;
+    font-size: var(--font-size-sm);
+}
+
+.security-status-good {
+    color: var(--cursor-green-light);
+}
+
+.security-status-active {
+    color: var(--cursor-blue-light);
+}
+
+/* Account Stats */
+.stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    transition: all var(--transition-fast);
+}
+
+.stat-item:hover {
+    background-color: var(--color-bg-elevated);
+    transform: translateY(-1px);
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--cursor-blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* Activity List */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.activity-item {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border-primary);
+    transition: all var(--transition-fast);
+}
+
+.activity-item:hover {
+    background-color: var(--color-bg-elevated);
+    transform: translateY(-1px);
+}
+
+.activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-icon-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--cursor-green-light);
+}
+
+.activity-icon-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--cursor-yellow-light);
+}
+
+.activity-icon-primary {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--cursor-blue-light);
+}
+
+.activity-icon-info {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--cursor-purple-light);
+}
+
+.activity-icon-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--cursor-red-light);
+}
+
+.activity-icon-muted {
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-tertiary);
+}
+
+.activity-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-description {
+    margin: 0 0 var(--space-2) 0;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+}
+
+.activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.activity-meta span {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.activity-time,
+.activity-ip {
+    color: var(--color-text-tertiary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+    
+    .profile-sidebar {
+        order: -1;
+    }
+    
+    .profile-sidebar .card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: var(--space-4);
+    }
+    
+    .profile-grid {
+        gap: var(--space-4);
+    }
+    
+    .profile-main {
+        gap: var(--space-6);
+    }
+    
+    .profile-sidebar {
+        gap: var(--space-4);
+    }
+    
+    .security-item,
+    .stat-item,
+    .activity-item {
+        padding: var(--space-3);
+    }
+    
+    .activity-meta {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+}
+
+@media (max-width: 480px) {
+    .security-item,
+    .stat-item {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-3);
+    }
+    
+    .activity-item {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+}
+</style>
+{% endblock %} 

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.utils import timezone
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from .forms import SignUpForm, LoginForm
 from apps.backend.models import ActivityLog
 
 def get_client_ip(request):
@@ -31,7 +31,7 @@ def login_view(request):
         return redirect('frontend:dashboard')
     
     if request.method == 'POST':
-        form = CustomAuthenticationForm(request, data=request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
@@ -44,16 +44,16 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid username or password.')
     else:
-        form = CustomAuthenticationForm()
+        form = LoginForm()
     
-    return render(request, 'accounts/login.html', {'form': form})
+    return render(request, 'authentication/login.html', {'form': form})
 
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('frontend:dashboard')
     
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -66,9 +66,9 @@ def register_view(request):
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
-        form = CustomUserCreationForm()
+        form = SignUpForm()
     
-    return render(request, 'accounts/register.html', {'form': form})
+    return render(request, 'authentication/register.html', {'form': form})
 
 @login_required
 def logout_view(request):
@@ -84,7 +84,13 @@ def profile_view(request):
     """User profile view"""
     recent_activities = ActivityLog.objects.filter(user=request.user)[:10]
     
+    # Calculate favorites count
+    credentials_favorites = request.user.credentials.filter(is_favorite=True).count()
+    notes_favorites = request.user.secure_notes.filter(is_favorite=True).count()
+    favorites_count = credentials_favorites + notes_favorites
+    
     context = {
         'recent_activities': recent_activities,
+        'favorites_count': favorites_count,
     }
-    return render(request, 'accounts/profile.html', context)
+    return render(request, 'authentication/profile.html', context)

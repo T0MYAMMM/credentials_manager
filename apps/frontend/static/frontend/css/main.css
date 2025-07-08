@@ -569,49 +569,77 @@ textarea.form-control {
 /* === Modals === */
 .modal,
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-bg-overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-bg-overlay);
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+/* Show modal when active */
+.modal.show {
+    display: flex !important;
+    opacity: 1;
 }
 
 .modal-content {
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-xl);
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-2xl);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-xl);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    transform: scale(0.9);
+    transition: transform var(--transition-normal);
+}
+
+/* Scale animation for modal content */
+.modal.show .modal-content {
+    transform: scale(1);
 }
 
 /* Ensure modals are hidden by default */
 .modal[style*="display: none"],
 .modal-overlay[style*="display: none"] {
-  display: none !important;
+    display: none !important;
 }
 
 /* Additional modal defensive styles */
 .modal-overlay:not([style*="display: flex"]):not([style*="display: block"]) {
-  display: none !important;
+    display: none !important;
 }
 
 /* Prevent modal interference with page content */
 .modal-overlay {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .modal-overlay[style*="display: flex"],
 .modal-overlay[style*="display: block"] {
-  pointer-events: all;
+    pointer-events: all;
+}
+
+/* Modal fade animation */
+.modal.fade {
+    transition: opacity 0.15s linear;
+}
+
+.modal.fade:not(.show) {
+    opacity: 0;
+}
+
+.modal.fade.show {
+    opacity: 1;
 }
 
 .modal-header {
@@ -719,29 +747,205 @@ textarea.form-control {
   width: 100%;
 }
 
+/* === Golden Ratio & Enhanced Spacing === */
+:root {
+  /* Golden Ratio Multipliers (1.618) */
+  --golden-ratio: 1.618;
+  --golden-ratio-inverse: 0.618;
+  
+  /* Enhanced Spacing Scale based on Golden Ratio */
+  --space-xs: 0.25rem;    /* 4px */
+  --space-sm: 0.375rem;   /* 6px */
+  --space-md: 0.5rem;     /* 8px */
+  --space-lg: 0.75rem;    /* 12px */
+  --space-xl: 1rem;       /* 16px - base */
+  --space-2xl: 1.618rem;  /* 26px - golden ratio */
+  --space-3xl: 2.618rem;  /* 42px - golden ratio squared */
+  --space-4xl: 4.236rem;  /* 68px - golden ratio cubed */
+  --space-5xl: 6.854rem;  /* 110px */
+  
+  /* Content Width Ratios */
+  --content-width-narrow: 38.2%;    /* Golden ratio inverse */
+  --content-width-wide: 61.8%;      /* Golden ratio */
+  --content-max-width: 75rem;       /* 1200px - golden ratio based */
+  
+  /* Line Height based on Golden Ratio */
+  --line-height-golden: 1.618;
+  --line-height-compact: 1.382;     /* Fibonacci-adjacent */
+}
+
+/* Enhanced Container Spacing */
+.container {
+  max-width: var(--content-max-width);
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+}
+
+/* Golden Ratio Layout Grids */
+.grid-golden {
+  display: grid;
+  grid-template-columns: var(--content-width-wide) var(--content-width-narrow);
+  gap: var(--space-2xl);
+}
+
+.grid-golden-reverse {
+  display: grid;
+  grid-template-columns: var(--content-width-narrow) var(--content-width-wide);
+  gap: var(--space-2xl);
+}
+
+/* Enhanced Card Spacing */
+.card {
+  margin-bottom: var(--space-2xl);
+}
+
+.card-body {
+  padding: var(--space-2xl);
+}
+
+.card-header {
+  padding: var(--space-xl) var(--space-2xl);
+}
+
+.card-footer {
+  padding: var(--space-xl) var(--space-2xl);
+}
+
+/* Enhanced Section Spacing */
+.section {
+  margin-bottom: var(--space-3xl);
+  padding: var(--space-2xl) 0;
+}
+
+.section-header {
+  margin-bottom: var(--space-2xl);
+}
+
+.section-content {
+  margin-bottom: var(--space-xl);
+}
+
+/* Enhanced Form Spacing */
+.form-group {
+  margin-bottom: var(--space-2xl);
+}
+
+.form-row {
+  display: flex;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+/* Enhanced Button Spacing */
+.btn {
+  padding: var(--space-lg) var(--space-2xl);
+  margin-bottom: var(--space-md);
+}
+
+.btn-sm {
+  padding: var(--space-md) var(--space-xl);
+}
+
+.btn-lg {
+  padding: var(--space-xl) var(--space-3xl);
+}
+
+.btn-group {
+  display: flex;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+/* Enhanced Typography Spacing */
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: var(--space-xl);
+  line-height: var(--line-height-compact);
+}
+
+p {
+  margin-bottom: var(--space-xl);
+  line-height: var(--line-height-golden);
+}
+
+/* Enhanced List Spacing */
+ul, ol {
+  margin-bottom: var(--space-xl);
+  padding-left: var(--space-2xl);
+}
+
+li {
+  margin-bottom: var(--space-md);
+  line-height: var(--line-height-golden);
+}
+
 /* === Responsive Design === */
+@media (max-width: 1200px) {
+  .grid-golden,
+  .grid-golden-reverse {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+}
+
 @media (max-width: 768px) {
   .container {
-    padding: 0 var(--space-4);
+    padding: 0 var(--space-lg);
   }
   
   .main-content {
-    padding: var(--space-6) 0;
+    padding: var(--space-xl) 0;
   }
   
-  .card-body,
+  .card-body {
+    padding: var(--space-xl);
+  }
+  
   .card-header {
-    padding: var(--space-4);
+    padding: var(--space-lg) var(--space-xl);
   }
   
   .btn {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-xs);
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-sm);
   }
   
   .modal-content {
-    margin: var(--space-4);
-    width: calc(100% - var(--space-8));
+    margin: var(--space-lg);
+    width: calc(100% - var(--space-2xl));
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  
+  .section {
+    margin-bottom: var(--space-2xl);
+    padding: var(--space-xl) 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--space-md);
+  }
+  
+  .card-body {
+    padding: var(--space-lg);
+  }
+  
+  .card-header {
+    padding: var(--space-md) var(--space-lg);
+  }
+  
+  .btn-group {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 

@@ -1,345 +1,331 @@
 # Credentials Manager
 
-A secure, Django-based web application for managing passwords, credentials, and secure notes with enterprise-grade encryption and a modern user interface.
+<div align="center">
+  <img src="https://img.shields.io/badge/Django-5.2+-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django">
+  <img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
+</div>
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Django](https://img.shields.io/badge/Django-4.2+-green.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+<div align="center">
+  <h3>🔐 A modern, secure password and credentials management system</h3>
+  <p>Built with Django and inspired by Cursor.com's elegant design system</p>
+</div>
 
-## 🚀 Features
+---
 
-### Core Functionality
-- **Secure Credential Management**: Store passwords, usernames, and login information with military-grade encryption
-- **Secure Notes**: Encrypted note storage for sensitive information
-- **Advanced Search**: Powerful search across all credentials and notes
-- **Favorites System**: Mark frequently used items as favorites
-- **Activity Logging**: Complete audit trail of user actions
-- **Data Export**: Export credentials to CSV format
-- **Type Categorization**: Organize credentials by type (email, banking, work, etc.)
+## 🌟 Features
 
-### Security Features
-- **End-to-End Encryption**: All sensitive data encrypted using Fernet symmetric encryption
-- **User Isolation**: Complete data separation between users
-- **Session Security**: Secure session management with CSRF protection
-- **Access Tracking**: Monitor when credentials are accessed
-- **Secure Password Handling**: Passwords never stored in plain text
+### 🔒 **Security First**
+- **AES-256 Encryption**: All passwords and sensitive data encrypted at rest
+- **Secure Authentication**: Django's robust user authentication system
+- **Activity Logging**: Comprehensive audit trail for security monitoring
+- **Session Management**: Secure session handling with configurable timeouts
 
-### User Experience
-- **Modern UI**: Clean, responsive interface built with modern CSS
-- **Dark Mode Ready**: UI designed for both light and dark themes
-- **Mobile Responsive**: Works seamlessly on all device sizes
-- **Fast Search**: Real-time search with instant results
-- **Intuitive Navigation**: Easy-to-use interface with clear organization
+### 📱 **Modern UI/UX**
+- **Dark Theme**: Professional, easy-on-eyes design inspired by Cursor.com
+- **Responsive Design**: Perfect on desktop, tablet, and mobile devices
+- **Golden Ratio Layout**: Mathematically pleasing proportions and spacing
+- **Smooth Animations**: Subtle animations for enhanced user experience
 
-## 📁 Project Architecture
+### ⚡ **Core Functionality**
+- **Credential Management**: Store, organize, and retrieve passwords securely
+- **Secure Notes**: Encrypted notes for sensitive information
+- **Advanced Search**: Fast, comprehensive search across all data
+- **Favorites System**: Quick access to frequently used credentials
+- **Data Export**: Export your data securely for backup purposes
+- **Real-time Updates**: Live search and instant feedback
 
-### High-Level Architecture
+### 🛠 **Developer Features**
+- **Modular Architecture**: Clean separation between backend logic and frontend
+- **RESTful APIs**: Well-structured API endpoints for extensibility
+- **Comprehensive Testing**: Extensive test coverage for reliability
+- **Type Hints**: Python type annotations for better code quality
+- **Detailed Logging**: Structured logging for debugging and monitoring
 
-```
-Credentials Manager
-├── Frontend App (UI Layer)
-│   ├── Views & Templates
-│   ├── User Interactions
-│   └── Form Handling
-├── Backend App (Business Logic)
-│   ├── Models & Database
-│   ├── Business Logic Classes
-│   ├── API Endpoints
-│   └── Security & Encryption
-└── Core Configuration
-    ├── Settings & URLs
-    ├── Authentication
-    └── Middleware
-```
+---
 
-### App Structure
-
-The project follows a clean separation of concerns with two main Django apps:
-
-#### 🎨 Frontend App (`apps/frontend/`)
-Handles all user interface and presentation logic:
-
-```
-frontend/
-├── views.py           # UI controllers
-├── urls.py            # Frontend routes
-├── context_processors.py  # Global template context
-├── templatetags/      # Custom template filters
-├── templates/         # HTML templates
-│   └── frontend/      # App-specific templates
-└── tests.py          # Frontend tests
-```
-
-**Key Responsibilities:**
-- Render HTML templates and forms
-- Handle user interactions and form submissions
-- Delegate business operations to backend
-- Manage navigation and user experience
-- Template context and UI state management
-
-#### ⚙️ Backend App (`apps/backend/`)
-Contains all business logic, data models, and API endpoints:
-
-```
-backend/
-├── models.py          # Data models & encryption
-├── business_logic.py  # Business logic classes
-├── api.py            # REST API endpoints
-├── views.py          # API controllers
-├── forms.py          # Form definitions & validation
-├── admin.py          # Django admin interface
-├── urls.py           # API routes
-└── tests.py          # Backend tests
-```
-
-**Key Responsibilities:**
-- Data persistence and model management
-- Business rule implementation
-- API endpoint provisioning
-- Security and encryption handling
-- Data validation and processing
-
-### Detailed Architecture Diagram
-
-```mermaid
-graph TB
-    subgraph "Frontend Layer"
-        UI[User Interface]
-        FORMS[Forms & Validation]
-        TEMP[Templates]
-        CTX[Context Processors]
-    end
-    
-    subgraph "Backend Layer"
-        API[REST API]
-        BL[Business Logic]
-        MODELS[Data Models]
-        ENCRYPT[Encryption Layer]
-    end
-    
-    subgraph "Data Layer"
-        DB[(SQLite Database)]
-        LOGS[(Activity Logs)]
-    end
-    
-    subgraph "External"
-        USER[User Browser]
-        AUTH[Django Auth]
-    end
-    
-    USER --> UI
-    UI --> FORMS
-    FORMS --> BL
-    API --> BL
-    BL --> MODELS
-    MODELS --> ENCRYPT
-    ENCRYPT --> DB
-    BL --> LOGS
-    AUTH --> UI
-    
-    CTX --> TEMP
-    TEMP --> UI
-```
-
-## 🏗️ Business Logic Architecture
-
-### Manager Classes
-
-The backend implements a manager-based architecture with specialized classes:
-
-#### 📊 DashboardManager
-```python
-# Get comprehensive dashboard statistics
-stats = DashboardManager.get_dashboard_stats(user)
-```
-- User statistics calculation
-- Recent activity aggregation  
-- Type distribution analysis
-- Performance-optimized queries
-
-#### 🔐 CredentialsManager
-```python
-# Complete credential lifecycle management
-credentials = CredentialsManager.get_user_credentials(user, search_params)
-credential, errors = CredentialsManager.create_credential(user, form_data)
-```
-- CRUD operations for credentials
-- Search and filtering
-- Validation and error handling
-- User isolation enforcement
-
-#### 📝 SecureNotesManager
-```python
-# Secure note management
-notes = SecureNotesManager.get_user_notes(user, search_params)
-note, errors = SecureNotesManager.create_note(user, form_data)
-```
-- Encrypted note operations
-- Type categorization
-- Content search capabilities
-
-#### 🔍 SearchManager
-```python
-# Advanced search across all data
-results = SearchManager.search_all_user_data(user, query="gmail")
-```
-- Cross-model search
-- Advanced filtering options
-- Performance optimization
-- Relevance ranking
-
-#### ⭐ FavoriteManager
-```python
-# Favorite status management
-is_favorite = FavoriteManager.toggle_favorite(credential, user)
-favorites = FavoriteManager.get_user_favorites(user)
-```
-- Toggle favorite status
-- Retrieve user favorites
-- Activity logging integration
-
-#### 📈 ActivityManager
-```python
-# Comprehensive activity tracking
-ActivityManager.log_activity(user, 'create_credential', 'Created Gmail account')
-activities = ActivityManager.get_user_activities(user, limit=20)
-```
-- Action logging and auditing
-- IP address tracking
-- Activity retrieval and filtering
-
-#### 📤 DataExportManager
-```python
-# Data export functionality
-csv_data = DataExportManager.export_user_data_csv(user)
-```
-- CSV export generation
-- Data formatting and sanitization
-- Privacy and security considerations
-
-### Encryption Architecture
-
-```python
-class EncryptionMixin:
-    @staticmethod
-    def encrypt_data(data):
-        """Encrypt sensitive data using Fernet"""
-        
-    @staticmethod
-    def decrypt_data(encrypted_data):
-        """Decrypt data with error handling"""
-```
-
-**Encryption Features:**
-- **Algorithm**: Fernet (AES 128 in CBC mode with HMAC SHA256)
-- **Key Management**: Derived from Django SECRET_KEY
-- **Error Handling**: Graceful degradation for corrupted data
-- **Performance**: Optimized for frequent encrypt/decrypt operations
-
-## 🛠️ Technology Stack
-
-### Core Technologies
-- **Backend**: Django 4.2+ (Python 3.8+)
-- **Database**: SQLite (development) / PostgreSQL (production)
-- **Authentication**: Django's built-in auth system
-- **Encryption**: Cryptography library (Fernet)
-
-### Frontend Technologies
-- **Templates**: Django Templates with custom filters
-- **CSS**: Modern CSS with CSS Grid and Flexbox
-- **JavaScript**: Vanilla JS for interactive features
-- **Icons**: Font Awesome 6
-- **Responsive**: Mobile-first responsive design
-
-### Development Tools
-- **Testing**: Django TestCase with comprehensive coverage
-- **Linting**: Python code style enforcement
-- **Documentation**: Markdown with Mermaid diagrams
-- **Version Control**: Git with conventional commits
-
-## 🚀 Installation & Setup
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.8 or higher
-- Git
-- Virtual environment tool (venv, virtualenv, or conda)
 
-### Quick Start
+- **Python 3.9+** (3.11+ recommended)
+- **pip** (Python package manager)
+- **Git** (for cloning the repository)
 
-1. **Clone the Repository**
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repository-url>
+   cd credentials_manager
+   ```
+
+2. **Create a virtual environment**
+   ```bash
+   python -m venv venv
+   
+   # On Windows
+   venv\Scripts\activate
+   
+   # On macOS/Linux
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set up environment variables**
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env with your settings
+   nano .env
+   ```
+
+5. **Initialize the database**
+   ```bash
+   python manage.py migrate
+   ```
+
+6. **Create a superuser account**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. **Collect static files**
+   ```bash
+   python manage.py collectstatic --noinput
+   ```
+
+8. **Run the development server**
+   ```bash
+   python manage.py runserver
+   ```
+
+9. **Access the application**
+   - Open your browser and go to `http://127.0.0.1:8000`
+   - Login with your superuser credentials
+
+---
+
+## 📋 Detailed Setup Guide
+
+### Environment Configuration
+
+Create a `.env` file in the project root with the following settings:
+
 ```bash
-git clone <repository-url>
-cd credentials_manager
-```
-
-2. **Create Virtual Environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install Dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Environment Setup**
-```bash
-# Copy environment template
-cp .env.example .env
-
-# Edit .env with your settings
+# Basic Configuration
+SECRET_KEY=your-super-secret-key-here
 DEBUG=True
-SECRET_KEY=your-secret-key-here
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database Configuration (Optional - defaults to SQLite)
+DATABASE_URL=sqlite:///db.sqlite3
+# For PostgreSQL: DATABASE_URL=postgresql://user:password@localhost:5432/credentials_manager
+
+# Security Settings
+SESSION_COOKIE_AGE=3600
+CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+
+# Application Settings
+PAGINATION_SIZE=12
+ACTIVITY_LOG_RETENTION_DAYS=90
+ENABLE_ACTIVITY_LOGGING=True
+
+# Email Configuration (Optional)
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+DEFAULT_FROM_EMAIL=noreply@credentialsmanager.com
 ```
 
-5. **Database Setup**
-```bash
-python manage.py makemigrations
-python manage.py migrate
-python manage.py createsuperuser
-```
+### Database Options
 
-6. **Run Development Server**
-```bash
-python manage.py runserver
-```
+#### SQLite (Default - Development)
+No additional setup required. The SQLite database file will be created automatically.
 
-7. **Access Application**
-- Web Interface: http://localhost:8000
-- Admin Interface: http://localhost:8000/admin
-- API Endpoints: http://localhost:8000/api/
+#### PostgreSQL (Recommended for Production)
+1. Install PostgreSQL
+2. Create a database:
+   ```sql
+   CREATE DATABASE credentials_manager;
+   CREATE USER credentials_user WITH PASSWORD 'your_password';
+   GRANT ALL PRIVILEGES ON DATABASE credentials_manager TO credentials_user;
+   ```
+3. Update your `.env` file:
+   ```bash
+   DATABASE_URL=postgresql://credentials_user:your_password@localhost:5432/credentials_manager
+   ```
 
 ### Production Deployment
 
-#### Environment Variables
-```bash
-# Required settings
-SECRET_KEY=your-production-secret-key
-DEBUG=False
-ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+#### Using Docker (Recommended)
 
-# Database (PostgreSQL recommended)
-DATABASE_URL=postgresql://user:pass@localhost/dbname
+1. **Build the Docker image**
+   ```bash
+   docker build -t credentials-manager .
+   ```
 
-# Security settings
-SECURE_SSL_REDIRECT=True
-SESSION_COOKIE_SECURE=True
-CSRF_COOKIE_SECURE=True
+2. **Run with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+#### Manual Deployment
+
+1. **Install production dependencies**
+   ```bash
+   pip install gunicorn psycopg2-binary
+   ```
+
+2. **Configure production settings**
+   ```bash
+   export DEBUG=False
+   export SECRET_KEY="your-production-secret-key"
+   export DATABASE_URL="your-production-database-url"
+   ```
+
+3. **Run with Gunicorn**
+   ```bash
+   gunicorn core.wsgi:application --bind 0.0.0.0:8000
+   ```
+
+---
+
+## 🎯 Usage Guide
+
+### Creating Your First Credential
+
+1. **Navigate to Dashboard**
+   - After logging in, you'll see the main dashboard
+   - Click "Add Credential" or go to Credentials → Add New
+
+2. **Fill in the Details**
+   - **Label**: Descriptive name (e.g., "Gmail Account")
+   - **Type**: Select from predefined categories
+   - **Username/Email**: Your login credentials
+   - **Password**: Will be encrypted automatically
+   - **Website URL**: Optional link to the service
+   - **Notes**: Additional information
+   - **Tags**: Comma-separated tags for organization
+
+3. **Save and Access**
+   - Click "Save" to store your credential
+   - Access it anytime from the Credentials list
+   - Use the copy buttons for quick password copying
+
+### Managing Secure Notes
+
+1. **Create a Note**
+   - Go to Notes → Add New
+   - Enter a title and content
+   - Select a category type
+   - Add tags for organization
+
+2. **Organization Features**
+   - Mark items as favorites for quick access
+   - Use tags to group related items
+   - Search across all content
+
+### Advanced Features
+
+#### Search Functionality
+- **Global Search**: Use the search bar to find credentials and notes
+- **Filter by Type**: Narrow results by credential type
+- **Tag Search**: Find items by their tags
+- **Favorites Filter**: View only your starred items
+
+#### Activity Monitoring
+- **Activity Log**: View all account activities
+- **Security Events**: Monitor login/logout events
+- **Data Changes**: Track when credentials are created/modified
+- **Export Options**: Download your activity history
+
+#### Data Management
+- **Export Data**: Download all your data in JSON format
+- **Backup Strategy**: Regular exports recommended
+- **Data Portability**: Standard format for easy migration
+
+---
+
+## 🏗 Architecture Overview
+
+### Project Structure
+
+```
+credentials_manager/
+├── apps/
+│   ├── authentication/          # User authentication & profiles
+│   │   ├── views.py            # Auth views (login, register, profile)
+│   │   ├── forms.py            # Authentication forms
+│   │   └── templates/          # Auth templates
+│   ├── backend/                # Core business logic
+│   │   ├── models.py           # Database models
+│   │   ├── forms.py            # Data input forms
+│   │   ├── business_logic.py   # Business logic layer
+│   │   ├── api.py              # API endpoints
+│   │   └── admin.py            # Django admin configuration
+│   └── frontend/               # User interface
+│       ├── views.py            # Frontend views
+│       ├── urls.py             # URL routing
+│       ├── templates/          # HTML templates
+│       ├── static/             # CSS, JS, images
+│       └── context_processors.py
+├── core/                       # Django project configuration
+│   ├── settings.py             # Application settings
+│   ├── urls.py                 # Main URL configuration
+│   └── wsgi.py                 # WSGI application
+├── docs/                       # Documentation
+├── static/                     # Collected static files
+├── media/                      # User uploads
+├── requirements.txt            # Python dependencies
+└── manage.py                   # Django management script
 ```
 
-#### Security Checklist
-- [ ] Set `DEBUG=False`
-- [ ] Use strong `SECRET_KEY`
-- [ ] Configure proper `ALLOWED_HOSTS`
-- [ ] Use PostgreSQL in production
-- [ ] Enable HTTPS/SSL
-- [ ] Configure secure cookies
-- [ ] Set up proper backup procedures
-- [ ] Implement rate limiting
-- [ ] Configure logging
+### Key Components
 
-## 🧪 Testing
+#### Models (`apps/backend/models.py`)
+- **Credentials**: Encrypted password storage with metadata
+- **SecureNote**: Encrypted note storage
+- **ActivityLog**: Security and usage tracking
+- **EncryptionMixin**: Shared encryption functionality
+
+#### Business Logic (`apps/backend/business_logic.py`)
+- **CredentialsManager**: CRUD operations for credentials
+- **SecureNotesManager**: Note management operations
+- **ActivityManager**: Activity logging and retrieval
+- **SearchManager**: Cross-model search functionality
+
+#### Frontend (`apps/frontend/`)
+- **Views**: Django views handling user requests
+- **Templates**: HTML templates with modern design
+- **Static Files**: CSS, JavaScript, and assets
+
+### Security Architecture
+
+#### Encryption
+- **Algorithm**: AES-256 encryption for all sensitive data
+- **Key Management**: Django's SECRET_KEY used for encryption key derivation
+- **Data at Rest**: All passwords and note content encrypted in database
+- **Secure Transmission**: HTTPS recommended for production
+
+#### Authentication
+- **Session Management**: Django's built-in session framework
+- **Password Requirements**: Configurable password strength validation
+- **Activity Tracking**: All user actions logged for security auditing
+
+---
+
+## 🧪 Development
 
 ### Running Tests
 
@@ -347,288 +333,320 @@ CSRF_COOKIE_SECURE=True
 # Run all tests
 python manage.py test
 
-# Run specific app tests
+# Run tests for specific app
 python manage.py test apps.backend
-python manage.py test apps.frontend
 
-# Run with coverage
+# Run tests with coverage
+pip install coverage
 coverage run --source='.' manage.py test
-coverage html  # Generate HTML report
-coverage report  # Terminal report
+coverage report
+coverage html
 ```
 
-### Test Structure
+### Development Tools
 
-```
-tests/
-├── Backend Tests
-│   ├── Model Tests (encryption, validation)
-│   ├── Business Logic Tests (managers)
-│   ├── API Tests (endpoints, authentication)
-│   ├── Form Tests (validation, security)
-│   └── Integration Tests (workflows)
-└── Frontend Tests
-    ├── View Tests (rendering, permissions)
-    ├── Template Tests (context, display)
-    ├── Form Tests (UI, validation)
-    ├── Permission Tests (access control)
-    └── Integration Tests (user workflows)
-```
-
-### Test Coverage Goals
-- **Models**: 100% coverage
-- **Business Logic**: 95%+ coverage
-- **Views/APIs**: 90%+ coverage
-- **Forms**: 95%+ coverage
-- **Integration**: 80%+ coverage
-
-## 📚 API Documentation
-
-### Available Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/stats/` | GET | User dashboard statistics |
-| `/api/search/` | POST | Search credentials and notes |
-| `/api/toggle-favorite/` | POST | Toggle favorite status |
-
-### Authentication
-All API endpoints require authentication via Django sessions.
-
-### Example API Usage
-
+#### Django Debug Toolbar
 ```bash
-# Get user statistics
-curl -X GET http://localhost:8000/api/stats/ \
-  --cookie "sessionid=your_session_id"
+# Install debug toolbar
+pip install django-debug-toolbar
 
-# Search for items
-curl -X POST http://localhost:8000/api/search/ \
-  -H "Content-Type: application/json" \
-  -H "X-CSRFToken: your_csrf_token" \
-  --cookie "sessionid=your_session_id" \
-  -d '{"query": "gmail", "type_filter": "email"}'
+# Add to INSTALLED_APPS in settings.py
+# Automatically configured in development mode
 ```
 
-For complete API documentation, see [API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md).
+#### Code Quality
+```bash
+# Install development tools
+pip install black flake8 mypy
 
-## 🔒 Security Features
+# Format code
+black .
 
-### Data Protection
-- **Encryption at Rest**: All sensitive data encrypted before database storage
-- **User Isolation**: Complete data separation between users  
-- **Access Control**: Role-based permissions system
-- **Audit Trail**: Complete activity logging
+# Check code style
+flake8
 
-### Security Headers
-- CSRF Protection enabled
-- Secure session cookies
-- XSS protection headers
-- Content Security Policy ready
-
-### Best Practices
-- Passwords never stored in plain text
-- Sensitive data never logged
-- Input validation and sanitization
-- SQL injection prevention
-- Cross-user data access prevention
-
-## 🎯 Usage Examples
-
-### Creating a Credential
-1. Navigate to "Add Credential"
-2. Fill in the form with:
-   - Label: "Gmail Personal"
-   - Type: "Email"
-   - Username: "your.email@gmail.com"
-   - Password: "your_secure_password"
-3. Save and view the encrypted credential
-
-### Searching Credentials
-1. Use the search bar on any page
-2. Enter search terms: "gmail" or "banking"
-3. Filter by type, favorites, or other criteria
-4. View instant results across all your data
-
-### Managing Favorites
-1. Click the star icon on any credential or note
-2. View favorites from the dashboard
-3. Filter lists to show only favorites
-
-### Exporting Data
-1. Go to Settings → Export Data
-2. Download CSV file with all credentials
-3. Passwords are included for backup purposes
-
-## 🗂️ Directory Structure
-
+# Type checking
+mypy .
 ```
-credentials_manager/
-├── core/                   # Project configuration
-│   ├── settings.py         # Django settings
-│   ├── urls.py            # Main URL configuration
-│   └── wsgi.py            # WSGI application
-├── apps/                   # Django applications
-│   ├── frontend/           # Frontend app
-│   │   ├── views.py
-│   │   ├── urls.py
-│   │   ├── context_processors.py
-│   │   ├── templates/
-│   │   └── templatetags/
-│   └── backend/            # Backend app
-│       ├── models.py
-│       ├── business_logic.py
-│       ├── api.py
-│       ├── views.py
-│       ├── forms.py
-│       └── admin.py
-├── templates/              # Global templates
-│   ├── layouts/            # Base templates
-│   ├── accounts/           # Authentication templates
-│   └── partials/           # Reusable components
-├── static/                 # Static files
-│   ├── css/               # Stylesheets
-│   ├── js/                # JavaScript
-│   └── img/               # Images
-├── docs/                   # Documentation
-│   └── API_DOCUMENTATION.md
-├── requirements.txt        # Python dependencies
-├── manage.py              # Django management script
-└── README.md              # This file
+
+### API Documentation
+
+The application provides RESTful API endpoints for programmatic access:
+
+#### Authentication Required Endpoints
+- `GET /api/user-stats/` - User statistics
+- `POST /api/search/` - Search credentials and notes
+- `POST /api/toggle-favorite/` - Toggle favorite status
+
+#### API Usage Example
+```javascript
+// Search for credentials
+fetch('/api/search/', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify({
+        query: 'github',
+        type_filter: 'all'
+    })
+})
+.then(response => response.json())
+.then(data => console.log(data));
 ```
+
+---
+
+## 🔧 Configuration
+
+### Application Settings
+
+Key settings in `core/settings.py`:
+
+```python
+# Application-specific settings
+CREDENTIALS_MANAGER = {
+    'APP_NAME': 'Credentials Manager',
+    'APP_VERSION': '1.0.0',
+    'PAGINATION_SIZE': 12,
+    'MAX_EXPORT_ITEMS': 1000,
+    'ACTIVITY_LOG_RETENTION_DAYS': 90,
+    'ENABLE_ACTIVITY_LOGGING': True,
+    'ENABLE_FAVORITES': True,
+    'ENABLE_SEARCH': True,
+    'ENABLE_EXPORT': True,
+}
+```
+
+### Security Configuration
+
+```python
+# Security settings for production
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_SSL_REDIRECT = True
+X_FRAME_OPTIONS = 'DENY'
+```
+
+### Logging Configuration
+
+Structured logging is configured for different environments:
+
+```python
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'django.log',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'apps.backend': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+```
+
+---
 
 ## 🤝 Contributing
 
-### Development Workflow
+We welcome contributions! Please follow these guidelines:
 
-1. **Fork the Repository**
-2. **Create Feature Branch**
+### Development Setup
+
+1. **Fork the repository**
+2. **Create a feature branch**
    ```bash
-   git checkout -b feature/amazing-feature
+   git checkout -b feature/your-feature-name
    ```
-3. **Make Changes**
-   - Follow coding standards
-   - Add tests for new features
-   - Update documentation
-4. **Run Tests**
+
+3. **Set up development environment**
+   ```bash
+   pip install -r requirements-dev.txt
+   pre-commit install
+   ```
+
+4. **Make your changes**
+   - Follow PEP 8 style guidelines
+   - Add tests for new functionality
+   - Update documentation as needed
+
+5. **Run tests and checks**
    ```bash
    python manage.py test
+   black .
+   flake8
    ```
-5. **Submit Pull Request**
 
-### Code Standards
-- Follow PEP 8 for Python code
-- Use meaningful variable and function names
-- Add docstrings to all functions and classes
-- Maintain test coverage above 90%
-- Update documentation for new features
+6. **Submit a pull request**
+
+### Code Style
+
+- **Python**: Follow PEP 8, use Black for formatting
+- **JavaScript**: Use modern ES6+ syntax
+- **CSS**: Follow BEM methodology for class naming
+- **HTML**: Use semantic HTML5 elements
 
 ### Commit Messages
+
 Use conventional commit format:
 ```
-feat: add user export functionality
-fix: resolve encryption key rotation issue
-docs: update API documentation
-test: add integration tests for search
+feat: add new search functionality
+fix: resolve password visibility toggle issue
+docs: update installation instructions
+style: improve button hover animations
 ```
 
-## 📖 Documentation
+---
 
-- **[API Documentation](docs/API_DOCUMENTATION.md)**: Complete API reference
-- **[Architecture Guide](docs/ARCHITECTURE.md)**: Detailed system architecture
-- **[Security Guide](docs/SECURITY.md)**: Security implementation details
-- **[Deployment Guide](docs/DEPLOYMENT.md)**: Production deployment instructions
+## 🛡 Security
 
-## 🐛 Troubleshooting
+### Security Features
 
-### Common Issues
+- **Encryption**: AES-256 encryption for all sensitive data
+- **Authentication**: Secure user authentication with session management
+- **CSRF Protection**: Cross-site request forgery protection
+- **XSS Protection**: Cross-site scripting prevention
+- **Secure Headers**: Security headers configured for production
 
-**Database Migration Errors**
-```bash
-# Reset migrations (development only)
-python manage.py migrate --fake-initial
-python manage.py makemigrations
-python manage.py migrate
-```
+### Security Best Practices
 
-**Encryption Key Issues**
-```bash
-# Ensure SECRET_KEY is properly set
-python manage.py shell
->>> from django.conf import settings
->>> print(len(settings.SECRET_KEY))  # Should be > 32 chars
-```
+1. **Keep Dependencies Updated**
+   ```bash
+   pip list --outdated
+   pip install --upgrade package-name
+   ```
 
-**Template Not Found**
-- Check `INSTALLED_APPS` includes both apps
-- Verify template path in `TEMPLATES` setting
-- Ensure template files exist in correct directories
+2. **Regular Security Audits**
+   ```bash
+   pip install safety
+   safety check
+   ```
 
-**Permission Denied**
-- Verify user authentication
-- Check object ownership in views
-- Review URL patterns and namespaces
+3. **Environment Variables**
+   - Never commit sensitive data to version control
+   - Use strong, unique SECRET_KEY for production
+   - Regularly rotate encryption keys
 
-### Performance Optimization
+4. **Database Security**
+   - Use strong database passwords
+   - Enable database encryption at rest
+   - Regular database backups
 
-**Database Optimization**
-```python
-# Use select_related for foreign keys
-credentials = Credentials.objects.select_related('user')
+### Reporting Security Issues
 
-# Use prefetch_related for reverse lookups
-users = User.objects.prefetch_related('credentials_set')
-```
+If you discover a security vulnerability, please:
+1. **Do not** open a public issue
+2. Email us directly at security@yourproject.com
+3. Include detailed steps to reproduce
+4. Allow time for us to respond and fix the issue
 
-**Caching Strategy**
-```python
-# Cache dashboard stats
-from django.core.cache import cache
-cache.set(f'dashboard_stats_{user.id}', stats, timeout=300)
-```
+---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🎯 Roadmap
+```
+MIT License
 
-### Version 2.0 Features
-- [ ] Two-factor authentication (2FA)
-- [ ] Shared credentials with team members
-- [ ] Browser extension
-- [ ] Mobile app (React Native)
-- [ ] Advanced password generator
-- [ ] Security breach monitoring
-- [ ] Automated backup to cloud storage
+Copyright (c) 2025 Credentials Manager
 
-### Version 2.1 Features
-- [ ] API rate limiting
-- [ ] GraphQL API
-- [ ] Advanced audit reports
-- [ ] Custom field types
-- [ ] Bulk import/export
-- [ ] Advanced search filters
-- [ ] Email notifications
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
 
 ## 📞 Support
 
 ### Getting Help
 
-- **Documentation**: Check the docs/ directory
-- **Issues**: Create GitHub issues for bugs
-- **Questions**: Use GitHub discussions
-- **Security**: Email security@example.com
+- **Documentation**: Check this README and the `/docs` folder
+- **Issues**: Open an issue on GitHub for bugs and feature requests
+- **Discussions**: Use GitHub Discussions for questions and community support
 
-### Reporting Bugs
+### Common Issues
 
-When reporting bugs, please include:
-1. Steps to reproduce
-2. Expected behavior
-3. Actual behavior
-4. Environment details (Python version, OS, etc.)
-5. Error messages and stack traces
+#### Installation Problems
+```bash
+# If you get permission errors on Windows
+pip install --user -r requirements.txt
+
+# If you get SSL errors
+pip install --trusted-host pypi.org --trusted-host pypi.python.org pip setuptools
+```
+
+#### Database Issues
+```bash
+# Reset database (development only)
+rm db.sqlite3
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+#### Static Files Issues
+```bash
+# Recollect static files
+python manage.py collectstatic --clear --noinput
+```
 
 ---
 
-**Built with ❤️ for secure credential management**
+## 🔄 Changelog
+
+### Version 1.0.0 (2025-01-XX)
+
+#### ✨ Features
+- Complete credentials management system
+- Secure notes functionality
+- Modern dark theme UI
+- Advanced search capabilities
+- Activity logging and monitoring
+- Data export functionality
+- Responsive design
+- RESTful API endpoints
+
+#### 🔧 Technical
+- Django 5.2+ compatibility
+- AES-256 encryption
+- Comprehensive test coverage
+- Production-ready configuration
+- Docker support
+- Security best practices
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by the Credentials Manager team</p>
+  <p>⭐ Star this repository if you find it helpful!</p>
+</div>

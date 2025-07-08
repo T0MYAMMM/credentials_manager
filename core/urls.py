@@ -44,7 +44,7 @@ urlpatterns = [
     path('api/', include('apps.backend.urls')),
     
     # Frontend application
-    path('', include('apps.frontend.urls')),
+    path('dashboard/', include('apps.frontend.urls')),
     
     # Utility endpoints
     path('health/', health_check, name='health_check'),
