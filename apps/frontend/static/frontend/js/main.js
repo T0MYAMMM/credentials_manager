@@ -12,10 +12,38 @@ function ready(fn) {
     }
 }
 
-// CSRF token utility
+// CSRF token utility - improved for better production compatibility
 function getCSRFToken() {
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-    return csrfToken ? csrfToken.value : null;
+    // Try multiple methods to get CSRF token
+    
+    // Method 1: Try meta tag (most reliable for AJAX)
+    const metaTag = document.querySelector('meta[name=csrf-token]');
+    if (metaTag) {
+        return metaTag.getAttribute('content');
+    }
+    
+    // Method 2: Try cookie (Django's default for AJAX)
+    const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='));
+    if (cookieValue) {
+        return cookieValue.split('=')[1];
+    }
+    
+    // Method 3: Try form input (fallback)
+    const formToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (formToken) {
+        return formToken.value;
+    }
+    
+    // Method 4: Try hidden input in any form
+    const anyForm = document.querySelector('form input[name=csrfmiddlewaretoken]');
+    if (anyForm) {
+        return anyForm.value;
+    }
+    
+    console.error('CSRF token not found! This will cause 403 errors on API calls.');
+    return null;
 }
 
 // API utilities
@@ -128,6 +156,11 @@ async function toggleFavorite(type, id, iconElement) {
     const originalClass = iconElement.className;
     const originalColor = iconElement.style.color;
     
+    // Debug information
+    console.log('Toggle favorite called:', { type, id, iconElement });
+    const csrfToken = getCSRFToken();
+    console.log('CSRF token available:', csrfToken ? 'Yes' : 'No', csrfToken ? csrfToken.substring(0, 10) + '...' : 'null');
+    
     try {
         // Show loading state
         iconElement.className = 'fas fa-spinner fa-spin';
@@ -154,12 +187,28 @@ async function toggleFavorite(type, id, iconElement) {
         }
     } catch (error) {
         console.error('Toggle favorite failed:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            type: typeof error,
+            response: error.response || 'No response data'
+        });
         
         // Restore original state
         iconElement.className = originalClass;
         iconElement.style.color = originalColor;
         
-        Notifications.error('Failed to update favorite status');
+        // Better error messages based on error type
+        if (error.message.includes('403')) {
+            Notifications.error('Security error: Please refresh the page and try again');
+            console.error('CSRF token issue detected. Current token:', getCSRFToken());
+        } else if (error.message.includes('404')) {
+            Notifications.error('API endpoint not found');
+        } else if (error.message.includes('500')) {
+            Notifications.error('Server error: Please try again later');
+        } else {
+            Notifications.error('Failed to update favorite status: ' + error.message);
+        }
     }
 }
 
@@ -678,6 +727,52 @@ function testPasswordToggle() {
     }
 }
 
+// Debug function to test CSRF token functionality
+function testCSRFToken() {
+    console.log('=== CSRF Token Debug ===');
+    
+    // Test CSRF token retrieval
+    const token = getCSRFToken();
+    console.log('CSRF token:', token ? token.substring(0, 10) + '...' : 'Not found');
+    
+    // Check all possible token sources
+    console.log('Meta tag:', document.querySelector('meta[name=csrf-token]')?.getAttribute('content')?.substring(0, 10) + '...' || 'Not found');
+    console.log('Cookie:', document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1]?.substring(0, 10) + '...' || 'Not found');
+    console.log('Form input:', document.querySelector('[name=csrfmiddlewaretoken]')?.value?.substring(0, 10) + '...' || 'Not found');
+    
+    // Test API call
+    if (token) {
+        console.log('Testing API call with token...');
+        fetch('/api/stats/', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': token,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log('API test response status:', response.status);
+            if (response.status === 403) {
+                console.error('403 error - CSRF token is invalid or missing');
+            } else if (response.ok) {
+                console.log('API call successful - CSRF token is working');
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('API response data type:', typeof data);
+        })
+        .catch(error => {
+            console.error('API test failed:', error);
+        });
+    } else {
+        console.error('No CSRF token found - cannot test API call');
+    }
+    
+    console.log('=== End CSRF Debug ===');
+}
+
 // Export utilities for use in templates
 window.CredentialsManager = {
     API,
@@ -692,5 +787,7 @@ window.CredentialsManager = {
     Theme,
     FormUtils,
     Modal,
-    testPasswordToggle
+    testPasswordToggle,
+    testCSRFToken,
+    getCSRFToken
 }; 

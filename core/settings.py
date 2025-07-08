@@ -219,11 +219,12 @@ SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=not DEBUG, cast=
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 # CSRF Configuration
-CSRF_COOKIE_NAME = 'credentials_manager_csrftoken'
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_NAME = 'csrftoken'  # Use Django's default name for compatibility
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access for AJAX requests
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=not DEBUG, cast=bool)
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+CSRF_USE_SESSIONS = False  # Use cookies instead of sessions for CSRF tokens
 
 # Security Settings
 if not DEBUG:
